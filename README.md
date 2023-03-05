@@ -55,10 +55,10 @@ Przykład strony dla zakładu usługowego.
 - [x] Przygotowanie pliku README
 - [x] Konfiguracj Git i wypchniecie projektu na zdlane repozytorium
 - [x] Stworzenie testowego programu, który zwróci napis "Aplikacja działa"
-- [ ] Stworenie bazy danych
-- [ ] Stworzenie połaczenia z bazą danych
-- [ ] Instalacja TypeORM
-- [ ] Przygotowanie pliku config.ts 
+- [x] Stworenie bazy danych
+- [x] Przygotowanie pliku config.ts 
+- [x] Stworzenie połaczenia z bazą danych
+- [x] Instalacja TypeORM
 
 - [ ] Dodanie endpiontów
 - [ ] Globalna obsługa błędów
