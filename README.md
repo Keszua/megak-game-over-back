@@ -1,6 +1,6 @@
 # Projekt na zaliczenie
 <p align="center">
-  <a href="https://www.megak.pl/" target="_blank" rel="noreferrer"> <img src="https://github.com/Keszua/megak-game-over-front/raw/main/public/images/megak.png/" alt="MegaK" height="80"/>
+  <a href="https://www.megak.pl/" target="_blank" rel="noreferrer"> <img src="https://github.com/Keszua/megak-game-over-front/blob/main/public/images/megak.png/" alt="MegaK" height="80"/>
   </a>
 </p>
 
@@ -39,11 +39,12 @@ Przykład strony dla zakładu usługowego.
   </a> 
   <a href="https://www.mysql.com/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/mysql/mysql-original-wordmark.svg" alt="mysql" height="50"/> 
   </a> 
+  <a href="https://typeorm.io/" target="_blank" rel="noreferrer"> <img src="https://github.com/typeorm/typeorm/raw/master/resources/logo_big.png" alt="typeORM" height="40"/> 
+  </a> 
   <a href="https://git-scm.com/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/git-scm/git-scm-icon.svg" alt="git" width="40" height="40"/> 
   </a> 
   <a href="https://github.com/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/jmnote/z-icons/master/svg/github.svg" alt="github" width="50" height="40"/> 
   </a> 
-
 </p>
 
 
@@ -52,11 +53,12 @@ Przykład strony dla zakładu usługowego.
 - [x] Instalacj Nest
 - [x] Założenie repozytorium na GitHub
 - [x] Przygotowanie pliku README
-- [ ] Konfiguracj Git i wypchniecie projektu na zdlane repozytorium
-
-- [ ] Stworenie bazy danych
-- [ ] Stworzenie połaczenia z bazą danych
-- [ ] Przygotowanie pliku config.ts 
+- [x] Konfiguracj Git i wypchniecie projektu na zdlane repozytorium
+- [x] Stworzenie testowego programu, który zwróci napis "Aplikacja działa"
+- [x] Stworenie bazy danych
+- [x] Przygotowanie pliku config.ts 
+- [x] Stworzenie połaczenia z bazą danych
+- [x] Instalacja TypeORM
 
 - [ ] Dodanie endpiontów
 - [ ] Globalna obsługa błędów
@@ -69,6 +71,48 @@ Przykład strony dla zakładu usługowego.
 
 - [ ] Rejstracja, logowanie, autoryzacja i autentykacja
 
+<hr/>
+
+## Uruchomienie
+
+Repozytorium współdziała z częścią frontendową, którą można znaleźć pod [tym adresem](https://github.com/Keszua)
+
+#### Uruchomienie projektu na swojej lokanej maszynie
+
+Sklonuj repozytorium na swój dysk
+
+```bash
+git clone https://github.com/Keszua/project...
+```
+
+Wejdz do folderu *project* i pobierz wymagane zależnosci
+
+```bash
+cd project
+npm install
+```
+
+W folderze config, skopiuj plik *configuration.example.ts*, zmień jego nazwę na: *configuration.ts* i uzupełnij dane swojej konfiguracji bazy.
+
+Uruchomienie projektu
+
+```bash
+npm start
+```
+
+Zostanie uruhomiony serwer [http://localhost:3001](http://localhost:3001).
+
+Uruchomienie w trybie watch mode
+
+```bash
+npm run start:dev
+```
+
+Stworzenie wersji produkcyjnej
+
+```bash
+npm run start:prod
+```
 <hr/>
 
 ## Kontakt
