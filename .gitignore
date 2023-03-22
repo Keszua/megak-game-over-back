@@ -37,3 +37,4 @@ lerna-debug.log*
 # Private data
 ReadmePrivate.md
 configuration.ts
+*xx.yaml
