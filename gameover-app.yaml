@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: megak-gameover
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      name2: megak-gameover
+  template:
+    metadata:
+      labels:
+        name2: megak-gameover
+    spec:
+      containers:
+      - name: megak-gameover
+        image: 602841356/megak-gameover-back:v0.0.1h  # tutaj trzeba podstawic odpowiedni obraz kontenera
+        imagePullPolicy: Always                       # polityka pobierania obazu na klaster. Always - zawsze pobiera obraz
+        ports:
+        - containerPort: 3000
+        env:
+        - name: PORT
+          value: "3000"
+        - name: DB_HOST
+          value: mysql
+        - name: DB_PORT
+          value: "3306"
+        - name: DB_USERNAME 
+          valueFrom:
+            secretKeyRef:
+              name: gameover-secret
+              key: dbUser
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: gameover-secret
+              key: dbRootPassword
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: megak-gameover-srv
+spec:
+  type: LoadBalancer       # LoadBalancer dla chmury; NodePort dla lokalnego miniube
+  ports:
+  - port: 80               # jaki port ma byc wystawiony
+    targetPort: 3000       # port kontenera (containerPort z Deployment, do jakiego portu ma przekierowac ruch)
+    nodePort: 30001
+  selector:
+    name2: megak-gameover
+
+
+# tworzenie:
+# kubectl apply -f gameover.yaml
+
+# zmiana przestrzeni nazw
+# kubectl config set-context $(kubectl config current-context) --namespace=megak
+
+# kasowanie
+# kubectl delete -f gameover.yaml
