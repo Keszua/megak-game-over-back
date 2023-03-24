@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
-import { AuthLoginEntity } from "../types/auth/auth-login.entity";
+import { AuthLoginEntity, AuthLoginResponse } from "../types/auth/auth-login.entity";
 import { AuthGuard } from "@nestjs/passport";
 import { UserObj } from "../decorators/user-obj.decorator";
 import { User } from "../user/user.entity";
@@ -16,11 +16,11 @@ export class AuthController {
   async phoneRegister(
     @Body() req: AuthLoginEntity,
     @Res() res: Response,
-  ): Promise<any> {
+  ): Promise<AuthLoginResponse> {
     return this.authService.login(req, res);
   }
 
-  @Get('logout')
+  @Get('/logout')
   @UseGuards(AuthGuard('jwt'))
   async logout(@UserObj() user: User, @Res() res: Response) {
     return this.authService.logout(user, res);

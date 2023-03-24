@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Response } from 'express';
-import { AuthLoginEntity } from "../types/auth/auth-login.entity";
+import { AuthLoginEntity, AuthLoginResProblem, AuthLoginResponse } from "../types/auth/auth-login.entity";
 import { User } from "../user/user.entity";
 import { hashPwd } from "../utils/hash-pwd";
 import { v4 as uuid } from 'uuid';
@@ -45,27 +45,40 @@ export class AuthService {
       });
 
       if (!user) {
-        return res.json({ error: 'Invalid login data!' });
+        return res.json({ 
+            isSucces: false,
+            message: AuthLoginResProblem.INVALID_LOGIN,
+        } as AuthLoginResponse);
       }
 
       const token = await this.createToken(await this.generateToken(user));
 
       return res
         .cookie('jwt', token.accessToken, AuthConfigConstants.cookieOptions)
-        .json({ ok: true });
+        .json({ 
+            isSucces: true,
+        } as AuthLoginResponse);
     } catch (e) {
-      return res.json({ error: e.message });
+        return res.json({ 
+            isSucces: false,
+            message: e.message,
+        } as AuthLoginResponse);
     }
   };
 
   async logout(user: User, res: Response) {
     try {
-      user.currentTokenId = null;
-      await user.save();
-      res.clearCookie('jwt', AuthConfigConstants.cookieOptions);
-      return res.json({ ok: true });
+        user.currentTokenId = null;
+        await user.save();
+        res.clearCookie('jwt', AuthConfigConstants.cookieOptions);
+        return res.json({
+            isSucces: true,
+        } as AuthLoginResponse);
     } catch (e) {
-      return res.json({ error: e.message });
+        return res.json({ 
+            isSucces: false,
+            message: e.message,
+        } as AuthLoginResponse);
     }
   }
 }
