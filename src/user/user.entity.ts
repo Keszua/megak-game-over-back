@@ -1,4 +1,5 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { UserPermissions } from "../types";
 
 @Entity()
 export class User extends BaseEntity {
@@ -17,4 +18,17 @@ export class User extends BaseEntity {
 
     @Column()
     password: string;
+
+    @Column({
+        type: "enum",
+        enum: UserPermissions,
+        default: UserPermissions.USER,
+    })
+    permissions: string;
+
+    @Column({
+        nullable: true,
+        default: null,
+    })
+    currentTokenId: string | null;
 }

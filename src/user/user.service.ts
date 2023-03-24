@@ -43,9 +43,9 @@ export class UserService {
         }
 
         const user = new User();
-        user.email = newUser.email;
-        user.password = hashPwd(newUser.password);
-        user.login = newUser.login;    
+        user.email = email;
+        user.password = hashPwd(password);
+        user.login = login;    
         await user.save();
 
         return {
