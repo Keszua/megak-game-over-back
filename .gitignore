@@ -38,4 +38,3 @@ lerna-debug.log*
 ReadmePrivate.md
 configuration.ts
 *-priv*
-authconfig.ts

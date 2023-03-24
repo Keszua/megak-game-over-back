@@ -13,9 +13,11 @@ export class AuthService {
   private createToken(currentTokenId: string): { accessToken: string, expiresIn: number } {
     const payload: JwtPayload = { id: currentTokenId };
     const expiresIn = 60 * 60 * 24;
-    const accessToken = sign(payload,
-      AuthConfigConstants.secretKeyJwt,
-      { expiresIn });
+    const accessToken = sign(
+        payload,
+        AuthConfigConstants.secretKeyJwt,
+        { expiresIn }
+    );
     return {
       accessToken,
       expiresIn,
