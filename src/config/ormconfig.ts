@@ -13,4 +13,5 @@ export const ormConfig: MysqlConnectionOptions = {
 	], 
 	logging: true, 
 	synchronize: true,
+    charset: "utf8mb4_unicode_ci",
   }
