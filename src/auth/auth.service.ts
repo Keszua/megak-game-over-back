@@ -25,7 +25,7 @@ export class AuthService {
   };
 
   private async generateToken(user: User): Promise<string> {
-    let token;
+    let token: string;
     let userWithThisToken = null;
     do {
       token = uuid();
@@ -57,6 +57,7 @@ export class AuthService {
         .cookie('jwt', token.accessToken, AuthConfigConstants.cookieOptions)
         .json({ 
             isSucces: true,
+            login: user.login,
         } as AuthLoginResponse);
     } catch (e) {
         return res.json({ 

@@ -16,8 +16,6 @@ export class UserService {
     async register(newUser: UserRegisterEntity): Promise<UserRegisterResponse> {
         const { email, password, login } = newUser;
 
-        console.log(email, password, login);
-
         if (   email === ''    || email === undefined
             || password === '' || password === undefined
             || login === ''    || login === undefined) {
@@ -38,7 +36,15 @@ export class UserService {
         if (existUser) {
             return {
                 isSucces: false,
-                message: UserRegisterProblem.USER_IS_EXIST,
+                message: UserRegisterProblem.EMAIL_IS_EXIST,
+            }
+        }
+
+        existUser = await this.userRepository.findOne({ where: { login } });
+        if (existUser) {
+            return {
+                isSucces: false,
+                message: UserRegisterProblem.LOGIN_IS_EXIST,
             }
         }
 
