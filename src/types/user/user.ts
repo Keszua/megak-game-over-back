@@ -1,7 +1,8 @@
 export enum UserRegisterProblem {
-    DATA_IS_MISSING = 'Some data is missing',
-    USER_IS_EXIST = 'User already exists',
-    PASS_IS_TO_SHORT = 'Password too short',
+    DATA_IS_MISSING = 'Wypełnij wszystkie pola',
+    LOGIN_IS_EXIST = 'Login już istnieje',
+    EMAIL_IS_EXIST = 'Mail już istnieje',
+    PASS_IS_TO_SHORT = 'Hasło za krótkie',
 }
 
 export type UserRegisterResponse = {

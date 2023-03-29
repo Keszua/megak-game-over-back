@@ -8,7 +8,7 @@ export const config = {
     dbPort: 3306,
 	dbUser: 'you_name',
 	dbPassword: 'you_pass',
-	dbDatabase: 'balck_box',
+	dbDatabase: 'game_over',
 
     // authorization config 
     acSecretKeyJwt: 'you_jwt_key',

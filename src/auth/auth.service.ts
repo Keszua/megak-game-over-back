@@ -4,9 +4,10 @@ import { AuthLoginEntity, AuthLoginResProblem, AuthLoginResponse } from "../type
 import { User } from "../user/user.entity";
 import { hashPwd } from "../utils/hash-pwd";
 import { v4 as uuid } from 'uuid';
-import { sign } from 'jsonwebtoken';
+import { sign, verify } from 'jsonwebtoken';
 import { JwtPayload } from "./jwt.strategy";
 import { AuthConfigConstants } from '../config/authconfig';
+import { config } from '../config/configuration';
 
 @Injectable()
 export class AuthService {
@@ -25,7 +26,7 @@ export class AuthService {
   };
 
   private async generateToken(user: User): Promise<string> {
-    let token;
+    let token: string;
     let userWithThisToken = null;
     do {
       token = uuid();
@@ -57,6 +58,7 @@ export class AuthService {
         .cookie('jwt', token.accessToken, AuthConfigConstants.cookieOptions)
         .json({ 
             isSucces: true,
+            login: user.login,
         } as AuthLoginResponse);
     } catch (e) {
         return res.json({ 
@@ -80,5 +82,37 @@ export class AuthService {
             message: e.message,
         } as AuthLoginResponse);
     }
+  }
+
+  async islogged(req: any, res: Response): Promise<any> {
+    //console.log('cookies', req.cookies);
+
+    const token = req.cookies.jwt;
+    if(token) {
+        const decodeToken: any = verify(token, config.acSecretKeyJwt);
+        //console.log("decodeToken", decodeToken);
+
+        try {
+            const findUser = await User.findOneBy({
+                currentTokenId: decodeToken.id,
+            });
+            //console.log("useR", useR);
+
+            return res.json({
+                isSucces: true,
+                login: findUser.login,
+            } as AuthLoginResponse);
+        } catch (err) {
+            return res.json({
+                isSucces: false,
+                message: "Unauthorized",
+            } as AuthLoginResponse);
+        }
+    }
+
+    return res.json({
+        isSucces: false,
+        message: "Unauthorized",
+    } as AuthLoginResponse);
   }
 }
