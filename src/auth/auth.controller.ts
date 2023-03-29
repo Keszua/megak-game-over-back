@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
 import { AuthLoginEntity, AuthLoginResponse } from "../types/auth/auth-login.entity";
@@ -26,4 +26,8 @@ export class AuthController {
     return this.authService.logout(user, res);
   }
 
+  @Get('/islogged')
+  async islogged(@Req() req: any, @Res() res: Response) {
+    return this.authService.islogged(req, res);
+  }
 }
