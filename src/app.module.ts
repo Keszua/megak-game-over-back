@@ -7,6 +7,7 @@ import { ormConfig } from './config/ormconfig';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ShopModule } from './shop/shop.module';
+import { BasketModule } from './basket/basket.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ShopModule } from './shop/shop.module';
     UserModule,
     AuthModule,
     ShopModule,
+    BasketModule,
   ],
   controllers: [AppController],
   providers: [AppService],
