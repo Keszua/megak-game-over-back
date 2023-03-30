@@ -9,16 +9,15 @@ import { DeleteResult, Repository } from 'typeorm';
 export class ShopService {
     constructor(
         @Inject(forwardRef( () => BasketService)) private basketService: BasketService,
-        @InjectRepository(ShopItem) private shopItemRepository: Repository<ShopItem>,
     ) {
     }
 
     async getProducts(): Promise<GetListOfProductsRes> {
-        return await this.shopItemRepository.find();
+        return await ShopItem.find();
     }
 
     async getOneProduct(id: string): Promise<GetOneProductsRes> {
-        const product = await this.shopItemRepository.findOne({where: {id}});
+        const product = await ShopItem.findOne({where: {id}});
         if (product) {
             return product;
         }
@@ -50,15 +49,15 @@ export class ShopService {
     }
 
     async addBoughtCounter(id: string) {
-        await this.shopItemRepository.update(id, {
+        await ShopItem.update(id, {
             wasEverBought: true,
         })
 
-        const item = await this.shopItemRepository.findOne({where: {id}});
+        const item = await ShopItem.findOne({where: {id}});
 
         item.boughtCounter++;
 
-        await this.shopItemRepository.save(item);
+        await item.save();
     }
 
     async hasProduct(name: string): Promise<boolean> {
@@ -66,7 +65,7 @@ export class ShopService {
     }
 
     async removeOneProduct(id: string): Promise<DelOneProductsRes> {
-        const res: DeleteResult = await this.shopItemRepository.delete(id);
+        const res: DeleteResult = await ShopItem.delete(id);
         if (res.affected) {
             return {
                 isSucces: true,

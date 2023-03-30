@@ -7,7 +7,6 @@ import { ShopService } from './shop.service';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([ShopItem]),
         forwardRef( () => BasketModule),
     ],
     controllers: [ShopController],
