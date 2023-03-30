@@ -49,6 +49,18 @@ export class ShopService {
         
     }
 
+    async addBoughtCounter(id: string) {
+        await this.shopItemRepository.update(id, {
+            wasEverBought: true,
+        })
+
+        const item = await this.shopItemRepository.findOne({where: {id}});
+
+        item.boughtCounter++;
+
+        await this.shopItemRepository.save(item);
+    }
+
     async hasProduct(name: string): Promise<boolean> {
         return (await this.getProducts()).some((item: any) => item.name === name);
     }

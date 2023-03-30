@@ -1,4 +1,5 @@
 export interface AddProductEntity {
+    id: string;
     productName: string;
     count: number;
 }

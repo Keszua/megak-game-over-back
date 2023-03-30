@@ -16,7 +16,7 @@ export class BasketService {
     }
 
     async add(item: AddProductEntity): Promise<AddProductToBasketRes> {
-        const {productName, count} = item;
+        const {productName, count, id} = item;
         
         if (
                typeof productName !== 'string'
@@ -32,6 +32,8 @@ export class BasketService {
         
         this.items.push(item);
         
+        this.shopService.addBoughtCounter(id);
+
         return {
             isSuccess: true,
             index: 1,
