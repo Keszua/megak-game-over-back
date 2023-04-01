@@ -6,7 +6,7 @@ import { AuthGuard } from "@nestjs/passport";
 import { UserObj } from "../decorators/user-obj.decorator";
 import { User } from "../user/user.entity";
 
-@Controller('auth')
+@Controller('/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {
 
@@ -27,7 +27,8 @@ export class AuthController {
   }
 
   @Get('/islogged')
-  async islogged(@Req() req: any, @Res() res: Response) {
-    return this.authService.islogged(req, res);
+  @UseGuards(AuthGuard('jwt'))
+  async islogged(@Res() res: Response) {
+    return this.authService.islogged(res);
   }
 }
