@@ -1,16 +1,18 @@
-export interface ShopItemEntity {
+export interface ShortShopItemEntity { // dla wyświetlenia listy produktów
     id: string;
     productName: string;
     shortDescription: string;
-    description: string;
     price: Number;
-    quantity: Number;
-    quantityInfinity?: boolean;
-    imgUrl?: string;
+    quantity: Number | null;
+    imgUrl: string | null;
+}
+
+export interface ShopItemEntity extends  ShortShopItemEntity { // dla wyświetlenia karty produktu
+    description: string;
     show: boolean;
 }
 
-export type NewShopItemEntity = Omit<ShopItemEntity, 'id'>;
+export type NewShopItemEntity = Omit<ShopItemEntity, 'id'>; // dla tworzenia nowego rekordu w bazie
 
 export type GetListOfProductsRes = ShopItemEntity[];
 

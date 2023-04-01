@@ -32,6 +32,7 @@ export class ShopItem extends BaseEntity {
     
     @Column({
         default: 0,
+        nullable: true,
     })
     quantity: Number;
     

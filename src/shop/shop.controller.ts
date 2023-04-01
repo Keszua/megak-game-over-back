@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Inject, Param, Post } from '@nestjs/comm
 import { CreateNewProductsRes, DelOneProductsRes, GetListOfProductsRes, GetOneProductsRes, NewShopItemEntity } from '../types';
 import { ShopService } from './shop.service';
 
-@Controller('shop')
+@Controller('/shop')
 export class ShopController {
     constructor(
         @Inject(ShopService) private shopService: ShopService,
