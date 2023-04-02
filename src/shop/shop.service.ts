@@ -12,8 +12,16 @@ export class ShopService {
     ) {
     }
 
-    async getProducts(): Promise<GetListOfProductsRes> {
+    async getAllProducts(): Promise<GetListOfProductsRes> {
         return await ShopItem.find();
+    }
+
+    async getCategoryProducts(category: string,): Promise<GetListOfProductsRes> {
+        return await ShopItem.find({where: {category}});
+    }
+
+    async getPromotionProducts(): Promise<GetListOfProductsRes> {
+        return await ShopItem.find({where: {isPromotion: true}});
     }
 
     async getOneProduct(id: string): Promise<GetOneProductsRes> {
@@ -28,8 +36,37 @@ export class ShopService {
     }
 
     async createNewProducts(newItem: NewShopItemEntity): Promise<CreateNewProductsRes> {
-        const { description } = newItem;
+        const { productName, shortDescription, description, price, imgUrl } = newItem;
         
+
+        if (productName.length > 60) {
+            return ({
+                isSucces: false,
+                message: "Nazwa produktu nie moze przekraczać 60 znaków",
+            })
+        }
+
+        if (shortDescription.length > 255) {
+            return ({
+                isSucces: false,
+                message: "Skrócony opis nie może przekraczać 255 znaków",
+            })
+        }
+
+        if ( price > 99999999) {
+            return ({
+                isSucces: false,
+                message: "Cena nie może przekraczać 99 999 999",
+            })
+        }
+
+        if (imgUrl.length > 255) {
+            return ({
+                isSucces: false,
+                message: "adres linku nie może przekraczać 255 znaków",
+            })
+        }
+
         const item = new ShopItem();
         item.description = description;
         
@@ -61,7 +98,7 @@ export class ShopService {
     }
 
     async hasProduct(name: string): Promise<boolean> {
-        return (await this.getProducts()).some((item: any) => item.name === name);
+        return (await this.getAllProducts()).some((item: any) => item.name === name);
     }
 
     async removeOneProduct(id: string): Promise<DelOneProductsRes> {

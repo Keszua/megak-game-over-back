@@ -4,7 +4,9 @@ export interface ShortShopItemEntity { // dla wyświetlenia listy produktów
     shortDescription: string;
     price: Number;
     quantity: Number | null;
+    quantityInfinity: boolean;
     imgUrl: string | null;
+    isPromotion: boolean;
 }
 
 export interface ShopItemEntity extends  ShortShopItemEntity { // dla wyświetlenia karty produktu
@@ -26,4 +28,10 @@ export interface DelOneProductsRes {
 
 export type CreateNewProductsRes = ShopItemEntity | {
     isSucces: false,
+    message?: string,
 };
+
+export enum ShopProductCategory {
+    PRODUCT = "product",
+    SERVICE = "service",
+}

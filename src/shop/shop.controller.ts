@@ -11,7 +11,19 @@ export class ShopController {
 
     @Get('/')
     getListOfProducts(): Promise<GetListOfProductsRes> {
-        return this.shopService.getProducts();
+        return this.shopService.getAllProducts();
+    }
+
+    @Get('/category/:category')
+    getCategoryProducts(
+        @Param('category') category: string,
+    ): Promise<GetListOfProductsRes> {
+        return this.shopService.getCategoryProducts(category);
+    }
+
+    @Get('/promotion')
+    getListOfPromotionProducts(): Promise<GetListOfProductsRes> {
+        return this.shopService.getPromotionProducts();
     }
 
     @Get('/:id')

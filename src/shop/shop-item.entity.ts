@@ -1,3 +1,4 @@
+import { ShopProductCategory } from "../types";
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
@@ -24,7 +25,7 @@ export class ShopItem extends BaseEntity {
 
     @Column({
         type: 'float',
-        precision: 6,
+        precision: 10,
         scale: 2,
         default: 0,
     })
@@ -49,20 +50,32 @@ export class ShopItem extends BaseEntity {
     imgUrl: string | null;
 
     @Column({
+        default: 0,
+    })
+    boughtCounter: number;
+
+    // pola dla administratora ------------------------------------------------
+    @Column({
         default: true,
     })
     show: boolean;
 
     @Column({
+        type: "enum",
+        enum: ShopProductCategory,
+        default: ShopProductCategory.PRODUCT,
+    })
+    category: string;
+
+    @Column({
+        default: false,
+    })
+    isPromotion: boolean;
+
+    @Column({
         default: () => 'CURRENT_TIMESTAMP',
     })
     createAt: Date;
-
-    @Column({
-        default: 0,
-    })
-    boughtCounter: number;
-
 
     @Column({
         default: false,
