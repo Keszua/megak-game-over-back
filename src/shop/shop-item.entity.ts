@@ -27,13 +27,12 @@ export class ShopItem extends BaseEntity {
         type: 'float',
         precision: 10,
         scale: 2,
-        default: 0,
+        default: 1,
     })
     price: Number;
     
     @Column({
         default: 0,
-        nullable: true,
     })
     quantity: Number;
     
@@ -65,7 +64,7 @@ export class ShopItem extends BaseEntity {
         enum: ShopProductCategory,
         default: ShopProductCategory.PRODUCT,
     })
-    category: string;
+    category: ShopProductCategory;
 
     @Column({
         default: false,

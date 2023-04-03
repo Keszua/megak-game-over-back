@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post } from '@nestjs/common';
-import { CreateNewProductsRes, DelOneProductsRes, GetListOfProductsRes, GetOneProductsRes, NewShopItemEntity } from '../types';
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put } from '@nestjs/common';
+import { CreateNewProductsRes, DelOneProductsRes, GetListOfProductsRes, GetOneProductsRes, NewShopItemEntity, ShopItemEntity, ShopProductCategory, UpdateOneProductsRes } from '../types';
 import { ShopService } from './shop.service';
 
 @Controller('/shop')
@@ -16,7 +16,7 @@ export class ShopController {
 
     @Get('/category/:category')
     getCategoryProducts(
-        @Param('category') category: string,
+        @Param('category') category: ShopProductCategory,
     ): Promise<GetListOfProductsRes> {
         return this.shopService.getCategoryProducts(category);
     }
@@ -38,6 +38,13 @@ export class ShopController {
         @Body() newItem: NewShopItemEntity,
     ): Promise<CreateNewProductsRes> {
         return this.shopService.createNewProducts(newItem);
+    }
+
+    @Put('/')
+    updateProduct(
+        @Body() item: ShopItemEntity,
+    ): Promise<UpdateOneProductsRes> {
+        return this.shopService.updateProduct(item);
     }
 
     @Delete('/:id')

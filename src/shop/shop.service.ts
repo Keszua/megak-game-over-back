@@ -1,6 +1,6 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { BasketService } from '../basket/basket.service';
-import { CreateNewProductsRes, DelOneProductsRes, GetListOfProductsRes, GetOneProductsRes, NewShopItemEntity } from 'src/types';
+import { CreateNewProductsRes, DelOneProductsRes, GetListOfProductsRes, GetOneProductsRes, NewShopItemEntity, ShopItemEntity, ShopProductCategory, UpdateOneProductsRes } from '../types';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ShopItem } from './shop-item.entity';
 import { DeleteResult, Repository } from 'typeorm';
@@ -16,7 +16,7 @@ export class ShopService {
         return await ShopItem.find();
     }
 
-    async getCategoryProducts(category: string,): Promise<GetListOfProductsRes> {
+    async getCategoryProducts(category: ShopProductCategory): Promise<GetListOfProductsRes> {
         return await ShopItem.find({where: {category}});
     }
 
@@ -36,7 +36,7 @@ export class ShopService {
     }
 
     async createNewProducts(newItem: NewShopItemEntity): Promise<CreateNewProductsRes> {
-        const { productName, shortDescription, description, price, imgUrl } = newItem;
+        const { productName, shortDescription, price, quantity, quantityInfinity, imgUrl, isPromotion, description, show } = newItem;
         
 
         if (productName.length > 60) {
@@ -53,6 +53,13 @@ export class ShopService {
             })
         }
 
+        if ( price < 0) {
+            return ({
+                isSucces: false,
+                message: "Cena nie może być mniejsza niż zero",
+            })
+        }
+
         if ( price > 99999999) {
             return ({
                 isSucces: false,
@@ -60,7 +67,7 @@ export class ShopService {
             })
         }
 
-        if (imgUrl.length > 255) {
+        if (imgUrl && imgUrl.length > 255) {
             return ({
                 isSucces: false,
                 message: "adres linku nie może przekraczać 255 znaków",
@@ -68,11 +75,16 @@ export class ShopService {
         }
 
         const item = new ShopItem();
+        item.productName = productName;
+        item.shortDescription = shortDescription;
+        item.price = price;
+        item.quantity = quantity;
+        item.isPromotion = isPromotion;
         item.description = description;
-        
+        item.show = show;
+
         try {
             await item.save();
-            console.log("new item", item);
 
             return (
                 item
@@ -83,6 +95,24 @@ export class ShopService {
             })
         }
         
+    }
+
+    async updateProduct(item: ShopItemEntity): Promise<UpdateOneProductsRes> {
+        const { id } = item;
+        
+        try {
+            await ShopItem.update(id, {
+            ...item
+            });
+
+            return ({
+                isSucces: true,
+            })
+        } catch (err) {
+            return ({
+                isSucces: false,
+            });
+        }
     }
 
     async addBoughtCounter(id: string) {
