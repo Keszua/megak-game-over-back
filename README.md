@@ -71,13 +71,13 @@ Przykład strony dla zakładu usługowego.
 - [x] Uruchomienie projektu na AWS w usłudze EKS
 - [x] Rejestracja, logowanie, autoryzacja i autentykacja
 - [x] Dodanie modułu produktów i usług
-- [ ] Dodanie endpointów produktów i usług
-  - [ ] Zaprojektowanie struktury bazy
-  - [ ] Dodawanie rekordu ogłoszenia
-  - [ ] Zwracanie pojedynczego ogłoszenia
-  - [ ] Listowanie ogłoszeń
-  - [ ] Wyszukiwanie ogłoszeń
-  - [ ] Dodawanie ogłoszeń
+- [x] Dodanie endpointów produktów i usług
+  - [x] Zaprojektowanie struktury bazy
+  - [x] Dodawanie rekordu ogłoszenia
+  - [x] Zwracanie pojedynczego ogłoszenia
+  - [x] Listowanie ogłoszeń
+  - [x] Wyszukiwanie ogłoszeń
+  - [x] Dodawanie ogłoszeń
 - [x] Dodanie modułu koszyka
 - [ ] Dodanie endpiontów dla koszyka
   - [ ] Zaprojektowanie struktury bazy
@@ -223,11 +223,13 @@ replicaset.apps/megak-gameover-56464c685d   2         2         2       38m
 replicaset.apps/megak-gameover-6cb577955    0         0         0       60m
 ```
 
-Gdzie [http://ac58800750a4f453a90e4e72f470ca71-405922443.eu-central-1.elb.amazonaws.com/](http://ac58800750a4f453a90e4e72f470ca71-405922443.eu-central-1.elb.amazonaws.com/) to działający link, pod którym działa aplikacja.
-
+Gdzie [http://ac58800750a4f453a90e4e72f470ca71-405922443.eu-central-1.elb.amazonaws.com/](http://ac58800750a4f453a90e4e72f470ca71-405922443.eu-central-1.elb.amazonaws.com/) to  link, do naszej aplikacji.
 
 
 W plikach .yaml dodałem podstawowe wskazówki związane z dany plikiem
+
+**Uwaga!** Wyłączyłęm tą usługę, poniewarz w ciągu miesiaca obciążyło moje konto na około 100USD. Jeszcze nie stać mnie na taką zabawę.
+
 <br/><br/><hr/>
 
 ## Kontakt

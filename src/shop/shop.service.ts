@@ -1,9 +1,10 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { BasketService } from '../basket/basket.service';
-import { CreateNewProductsRes, DelOneProductsRes, GetListOfProductsRes, GetOneProductsRes, NewShopItemEntity, ShopItemEntity, ShopProductCategory, UpdateOneProductsRes } from '../types';
+import { CreateNewProductsRes, DelOneProductsRes, GetListOfProductsRes, GetOneProductsRes, NewShopItemEntity, ShopItemEntity, ShopProductCategory, UpdateOneProductsRes, UserPermissions } from '../types';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ShopItem } from './shop-item.entity';
 import { DeleteResult, Repository } from 'typeorm';
+import { User } from 'src/user/user.entity';
 
 @Injectable()
 export class ShopService {
@@ -35,9 +36,14 @@ export class ShopService {
         }
     }
 
-    async createNewProducts(newItem: NewShopItemEntity): Promise<CreateNewProductsRes> {
+    async createNewProducts(newItem: NewShopItemEntity, user: User): Promise<CreateNewProductsRes> {
         const { productName, shortDescription, price, quantity, quantityInfinity, imgUrl, isPromotion, description, show } = newItem;
         
+        if (user.permissions !== UserPermissions.ADMIN) {
+            return {
+                isSucces: false,
+            }
+        }
 
         if (productName.length > 60) {
             return ({
@@ -97,9 +103,15 @@ export class ShopService {
         
     }
 
-    async updateProduct(item: ShopItemEntity): Promise<UpdateOneProductsRes> {
+    async updateProduct(item: ShopItemEntity, user: User): Promise<UpdateOneProductsRes> {
         const { id } = item;
-        
+
+        if (user.permissions !== UserPermissions.ADMIN) {
+            return {
+                isSucces: false,
+            }
+        }
+
         try {
             await ShopItem.update(id, {
             ...item
@@ -131,7 +143,13 @@ export class ShopService {
         return (await this.getAllProducts()).some((item: any) => item.name === name);
     }
 
-    async removeOneProduct(id: string): Promise<DelOneProductsRes> {
+    async removeOneProduct(id: string, user: User): Promise<DelOneProductsRes> {
+        if (user.permissions !== UserPermissions.ADMIN) {
+            return {
+                isSucces: false,
+            }
+        }
+
         const res: DeleteResult = await ShopItem.delete(id);
         if (res.affected) {
             return {

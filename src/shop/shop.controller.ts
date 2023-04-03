@@ -1,4 +1,7 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { User } from '../user/user.entity';
+import { UserObj } from '../decorators/user-obj.decorator';
 import { CreateNewProductsRes, DelOneProductsRes, GetListOfProductsRes, GetOneProductsRes, NewShopItemEntity, ShopItemEntity, ShopProductCategory, UpdateOneProductsRes } from '../types';
 import { ShopService } from './shop.service';
 
@@ -34,24 +37,30 @@ export class ShopController {
     }
 
     @Post('/')
+    @UseGuards(AuthGuard('jwt'))
     createNewProducts(
         @Body() newItem: NewShopItemEntity,
+        @UserObj() user: User,
     ): Promise<CreateNewProductsRes> {
-        return this.shopService.createNewProducts(newItem);
+        return this.shopService.createNewProducts(newItem, user);
     }
 
     @Put('/')
+    @UseGuards(AuthGuard('jwt'))
     updateProduct(
         @Body() item: ShopItemEntity,
+        @UserObj() user: User,
     ): Promise<UpdateOneProductsRes> {
-        return this.shopService.updateProduct(item);
+        return this.shopService.updateProduct(item, user);
     }
 
     @Delete('/:id')
+    @UseGuards(AuthGuard('jwt'))
     removeOneProducts(
         @Param('id') id: string,
+        @UserObj() user: User,
     ): Promise<DelOneProductsRes> {
-        return this.shopService.removeOneProduct(id);
+        return this.shopService.removeOneProduct(id, user);
     }
 
 }

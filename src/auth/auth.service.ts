@@ -59,6 +59,7 @@ export class AuthService {
         .json({ 
             isSucces: true,
             login: user.login,
+            role: user.permissions,
         } as AuthLoginResponse);
     } catch (e) {
         return res.json({ 
