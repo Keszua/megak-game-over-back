@@ -1,4 +1,5 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BasketItem } from "../basket/item-in-basket.entity";
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { UserPermissions } from "../types";
 
 @Entity()
@@ -31,4 +32,7 @@ export class User extends BaseEntity {
         default: null,
     })
     currentTokenId: string | null;
+
+    @OneToMany( type => BasketItem, entity => entity.user)
+    itemsInBasket: BasketItem[];
 }

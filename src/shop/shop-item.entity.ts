@@ -1,5 +1,6 @@
 import { ShopProductCategory } from "../types";
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { BasketItem } from "src/basket/item-in-basket.entity";
 
 @Entity()
 export class ShopItem extends BaseEntity {
@@ -81,4 +82,6 @@ export class ShopItem extends BaseEntity {
     })
     wasEverBought: boolean;
 
+    @OneToMany(type => BasketItem, entity => entity.shopItem)
+    itemsInBasket: BasketItem[];
 }

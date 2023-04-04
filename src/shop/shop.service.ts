@@ -25,15 +25,16 @@ export class ShopService {
         return await ShopItem.find({where: {isPromotion: true}});
     }
 
-    async getOneProduct(id: string): Promise<GetOneProductsRes> {
+    //async getOneProduct(id: string): Promise<GetOneProductsRes> {
+    async getOneProduct(id: string): Promise<ShopItem> {
         const product = await ShopItem.findOne({where: {id}});
         if (product) {
             return product;
         }
         
-        return {
-            isSucces: false,
-        }
+        // return {
+        //     isSucces: false,
+        // }
     }
 
     async createNewProducts(newItem: NewShopItemEntity, user: User): Promise<CreateNewProductsRes> {
@@ -148,8 +149,8 @@ export class ShopService {
         await item.save();
     }
 
-    async hasProduct(name: string): Promise<boolean> {
-        return (await this.getAllProducts()).some((item: any) => item.name === name);
+    async hasProduct(name: string): Promise<boolean> { //TODO przerobić name an ID
+        return (await this.getAllProducts()).some((item: any) => item.productName === name);
     }
 
     async removeOneProduct(id: string, user: User): Promise<DelOneProductsRes> {
@@ -171,4 +172,12 @@ export class ShopService {
         }
     }
 
+    async getPrice(id: string): Promise<number> {
+        const product = await ShopItem.findOne({where: {id}});
+        if (product) {
+            return Number(product.price);
+        }
+        
+        return 0;
+    }
 }
