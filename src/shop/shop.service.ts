@@ -25,15 +25,16 @@ export class ShopService {
         return await ShopItem.find({where: {isPromotion: true}});
     }
 
-    async getOneProduct(id: string): Promise<GetOneProductsRes> {
+    //async getOneProduct(id: string): Promise<GetOneProductsRes> {
+    async getOneProduct(id: string): Promise<ShopItem> {
         const product = await ShopItem.findOne({where: {id}});
         if (product) {
             return product;
         }
         
-        return {
-            isSucces: false,
-        }
+        // return {
+        //     isSucces: false,
+        // }
     }
 
     async createNewProducts(newItem: NewShopItemEntity, user: User): Promise<CreateNewProductsRes> {

@@ -25,10 +25,17 @@ export class BasketController {
         return this.basketService.add(item);
     }
 
+    @Delete('/all')
+    clearBasket(
+    ): Promise<RemoveProductFromBasketRes> {
+        return this.basketService.clearBasket();
+    }
+
     @Delete('/:index')
     removeProductFromBasket(
         @Param('index') index: string,
     ): Promise<RemoveProductFromBasketRes> {
         return this.basketService.remove(index);
     }
+
 }
