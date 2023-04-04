@@ -11,6 +11,6 @@ import { ShopService } from './shop.service';
     ],
     controllers: [ShopController],
     providers: [ShopService],
-    exports:[ShopService],
+    exports: [ShopService],
 })
 export class ShopModule {}    

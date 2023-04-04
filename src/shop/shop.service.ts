@@ -38,10 +38,19 @@ export class ShopService {
 
     async createNewProducts(newItem: NewShopItemEntity, user: User): Promise<CreateNewProductsRes> {
         const { productName, shortDescription, price, quantity, quantityInfinity, imgUrl, isPromotion, description, show } = newItem;
-        
+    
+        if (!user) {
+            return {
+                isSucces: false,
+                message: "Nie wykryto użytkownika",
+            }
+        }
+
+
         if (user.permissions !== UserPermissions.ADMIN) {
             return {
                 isSucces: false,
+                message: "Nie masz uprawnień",
             }
         }
 
