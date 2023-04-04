@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Inject, Param, Post } from '@nestjs/common';
-import { AddProductEntity, ListProductFromBasketRes, RemoveProductFromBasketRes } from '../types';
+import { AddItemEntity, AddProductToBasketRes, GetTotalBasketPriceRes, ListProductFromBasketRes, RemoveProductFromBasketRes } from '../types';
 import { BasketService } from './basket.service';
 
 @Controller('basket')
@@ -13,10 +13,15 @@ export class BasketController {
         return this.basketService.list();
     }
 
+    @Get('/total-price')
+    getTtoalProce(): Promise<GetTotalBasketPriceRes> {
+        return this.basketService.getTotalPrice();
+    }
+
     @Post('/')
     addProductToBasket(
-        @Body() item: AddProductEntity,
-    ) {
+        @Body() item: AddItemEntity,
+    ): Promise<AddProductToBasketRes> {
         return this.basketService.add(item);
     }
 

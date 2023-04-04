@@ -139,8 +139,8 @@ export class ShopService {
         await item.save();
     }
 
-    async hasProduct(name: string): Promise<boolean> {
-        return (await this.getAllProducts()).some((item: any) => item.name === name);
+    async hasProduct(name: string): Promise<boolean> { //TODO przerobić name an ID
+        return (await this.getAllProducts()).some((item: any) => item.productName === name);
     }
 
     async removeOneProduct(id: string, user: User): Promise<DelOneProductsRes> {
@@ -162,4 +162,12 @@ export class ShopService {
         }
     }
 
+    async getPrice(id: string): Promise<number> {
+        const product = await ShopItem.findOne({where: {id}});
+        if (product) {
+            return Number(product.price);
+        }
+        
+        return 0;
+    }
 }
