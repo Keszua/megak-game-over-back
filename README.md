@@ -16,7 +16,7 @@ Do prawidłowego działania, wymagany jest **front end** dostępny pod [tym adre
 
 ## Opis projektu
 Przykład strony dla zakładu usługowego.
-- rejstracja, logowanie, autoryzacja i autentykacja
+- rejestracja, logowanie, autoryzacja i autentykacja
 - baza danych dla produktów i usług
 - obsługa koszyka
 
@@ -58,28 +58,35 @@ Przykład strony dla zakładu usługowego.
 
 ## Zrealizowane zadania
 
-- [x] Instalacj Nest
+- [x] Instalacja Nest
 - [x] Założenie repozytorium na GitHub
 - [x] Przygotowanie pliku README
-- [x] Konfiguracj Git i wypchniecie projektu na zdlane repozytorium
+- [x] Konfiguracja Git i wypchniecie projektu na zdalne repozytorium
 - [x] Stworzenie testowego programu, który zwróci napis "Aplikacja działa"
-- [x] Stworenie bazy danych
+- [x] Stworzenie bazy danych
 - [x] Przygotowanie pliku config.ts 
-- [x] Stworzenie połaczenia z bazą danych
+- [x] Stworzenie połąaczenia z bazą danych
 - [x] Instalacja TypeORM
 - [x] Konteneryzacja
 - [x] Uruchomienie projektu na AWS w usłudze EKS
-
-- [ ] Dodanie endpiontów
+- [x] Rejestracja, logowanie, autoryzacja i autentykacja
+- [x] Dodanie modułu produktów i usług
+- [x] Dodanie endpointów produktów i usług
+  - [x] Zaprojektowanie struktury bazy
+  - [x] Dodawanie rekordu ogłoszenia
+  - [x] Zwracanie pojedynczego ogłoszenia
+  - [x] Listowanie ogłoszeń
+  - [x] Wyszukiwanie ogłoszeń
+  - [x] Dodawanie ogłoszeń
+- [x] Dodanie modułu koszyka
+- [ ] Dodanie endpiontów dla koszyka
+  - [ ] Zaprojektowanie struktury bazy
+  - [ ] Dodawanie rekordu koszyka
+  - [ ] Zwracanie zawartości koszyka
+  - [ ] Zapamiętywanie historii koszyka/zakupów
 - [ ] Globalna obsługa błędów
 
-- [ ] Dodawanie rekordu
-- [ ] Listowanie ogłoszeń
-- [ ] Wyszukiwanie ogłoszeń
-- [ ] Dodawanie ogłoszeń
-- [ ] Zwracanie pojedynczego ogłoszenia
 
-- [ ] Rejstracja, logowanie, autoryzacja i autentykacja
 
 
 <hr/>
@@ -88,7 +95,7 @@ Przykład strony dla zakładu usługowego.
 
 Repozytorium współdziała z częścią frontendową, którą można znaleźć pod [tym adresem](https://github.com/Keszua)
 
-### Uruchomienie projektu na swojej lokanej maszynie
+### Uruchomienie projektu na swojej lokalnej maszynie
 
 Sklonuj repozytorium na swój dysk
 
@@ -96,7 +103,7 @@ Sklonuj repozytorium na swój dysk
 git clone https://github.com/Keszua/project...
 ```
 
-Wejdz do folderu *project* i pobierz wymagane zależnosci
+Wejdź do folderu *project* i pobierz wymagane zależności
 
 ```bash
 cd project
@@ -111,7 +118,7 @@ Uruchomienie projektu
 npm start
 ```
 
-Zostanie uruhomiony serwer [http://localhost:3001](http://localhost:3001).
+Zostanie uruchomiony serwer [http://localhost:3001](http://localhost:3001).
 
 Uruchomienie w trybie watch mode
 
@@ -135,7 +142,7 @@ Tworzenie obrazu kontenera:
 docker image build -t megak-gameover-back:v1.0.1 .
 ```
 
-Zakładjąc że jest zainstalwoany Docker, można sprawdzić, czy kontener uruchomi się prawidłowo na lokalnej maszynie, za pomcą polecenia:
+Zakładając że jest zainstalowany Docker, można sprawdzić, czy kontener uruchomi się prawidłowo na lokalnej maszynie, za pomocą polecenia:
 ```bash
 docker run -p 3000:3000 megak-gameover-back:v1.0.1
 ```
@@ -172,7 +179,7 @@ Można sprawdzić czy powstała instancja secret za pomocą polecenia (na chmurz
 kubectl get secrets
 ```
 
-*gameover-volume.yaml* - plik do stworzenia stałego miejsca na dysku, gdzie będą trwale przehowywane dane z bazy (nie zostaną utracone, nawet jeśli przestanie istnieć kontener z mysql)
+*gameover-volume.yaml* - plik do stworzenia stałego miejsca na dysku, gdzie będą trwale przechowywane dane z bazy (nie zostaną utracone, nawet jeśli przestanie istnieć kontener z mysql)
 ```bash
 kubectl apply -f gameover-volume.yaml
 ```
@@ -194,7 +201,7 @@ Jeśli wszystko się uruchomiło poprawnie, po wpisaniu polecenia (na chmurze):
 ```bash
 kubectl get all
 ```
-Powiniśmy zobaczyć wynik podobny do tego:
+Powinniśmy zobaczyć wynik podobny do tego:
 ```js
 NAME                                  READY   STATUS    RESTARTS   AGE
 pod/gameover-mysql-78779bdd59-7tchh   1/1     Running   0          65m
@@ -216,11 +223,13 @@ replicaset.apps/megak-gameover-56464c685d   2         2         2       38m
 replicaset.apps/megak-gameover-6cb577955    0         0         0       60m
 ```
 
-Gdzie [http://ac58800750a4f453a90e4e72f470ca71-405922443.eu-central-1.elb.amazonaws.com/](http://ac58800750a4f453a90e4e72f470ca71-405922443.eu-central-1.elb.amazonaws.com/) to działajacy link, pod którym działa aplikacja.
-
+Gdzie [http://ac58800750a4f453a90e4e72f470ca71-405922443.eu-central-1.elb.amazonaws.com/](http://ac58800750a4f453a90e4e72f470ca71-405922443.eu-central-1.elb.amazonaws.com/) to  link, do naszej aplikacji.
 
 
 W plikach .yaml dodałem podstawowe wskazówki związane z dany plikiem
+
+**Uwaga!** Wyłączyłęm tą usługę, poniewarz w ciągu miesiaca obciążyło moje konto na około 100USD. Jeszcze nie stać mnie na taką zabawę.
+
 <br/><br/><hr/>
 
 ## Kontakt
