@@ -1,4 +1,4 @@
-import { BasketItem } from "src/basket/item-in-basket.entity";
+import { BasketItem } from "../basket/item-in-basket.entity";
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { UserPermissions } from "../types";
 

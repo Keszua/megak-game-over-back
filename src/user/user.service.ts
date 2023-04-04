@@ -59,4 +59,8 @@ export class UserService {
         }
     }
 
+    async getOneUser(id: string): Promise<User> {
+        return await User.findOne({where: {id}});
+    }
+
 }

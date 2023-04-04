@@ -1,10 +1,9 @@
-import { AddItemEntity } from "../types";
 import { BaseEntity, Column, Entity, JoinColumn, ManyToMany, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { ShopItem } from "src/shop/shop-item.entity";
-import { User } from "src/user/user.entity";
+import { ShopItem } from "../shop/shop-item.entity";
+import { User } from "../user/user.entity";
 
 @Entity()
-export class BasketItem extends BaseEntity implements AddItemEntity{
+export class BasketItem extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 

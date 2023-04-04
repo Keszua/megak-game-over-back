@@ -1,10 +1,17 @@
 export interface AddItemEntity {
+    productId: string;
+    userId: string;
+    count: number;
+}
+
+export interface OneItemInBasket {
     id: string;
     count: number;
 }
 
+export type GetBasketResponse = OneItemInBasket[];
 
-export type ListProductFromBasketRes = AddItemEntity[];
+export type ListProductFromBasketRes = OneItemInBasket[];
 
 export type AddProductToBasketRes = {
     isSuccess: true;
