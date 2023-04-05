@@ -1,10 +1,10 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { BasketService } from '../basket/basket.service';
 import { CreateNewProductsRes, DelOneProductsRes, GetListOfProductsRes, GetOneProductsRes, NewShopItemEntity, ShopItemEntity, ShopProductCategory, UpdateOneProductsRes, UserPermissions } from '../types';
-import { InjectRepository } from '@nestjs/typeorm';
 import { ShopItem } from './shop-item.entity';
 import { DeleteResult, Repository } from 'typeorm';
 import { User } from 'src/user/user.entity';
+import { AddProductDto } from 'src/types/shop/add-product.dto';
 
 @Injectable()
 export class ShopService {
@@ -35,6 +35,17 @@ export class ShopService {
         // return {
         //     isSucces: false,
         // }
+    }
+
+    //async addProduct(req: AddProductDto): Promise<ShopItemEntity> {
+    async addProduct(req: AddProductDto): Promise<any> {
+        console.log({req});
+
+        return({
+            description: 'string',
+            show: true,
+            category: ShopProductCategory.PRODUCT,
+        })
     }
 
     async createNewProducts(newItem: NewShopItemEntity, user: User): Promise<CreateNewProductsRes> {

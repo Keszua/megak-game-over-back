@@ -54,6 +54,12 @@ export class ShopItem extends BaseEntity {
     })
     boughtCounter: number;
 
+    @Column({
+        default: null,
+        nullable: true,
+    })
+    photoFn: string;
+
     // pola dla administratora ------------------------------------------------
     @Column({
         default: true,
@@ -82,6 +88,7 @@ export class ShopItem extends BaseEntity {
     })
     wasEverBought: boolean;
 
+    // relacje ----------------------------------------------------------------
     @OneToMany(type => BasketItem, entity => entity.shopItem)
     itemsInBasket: BasketItem[];
 }
