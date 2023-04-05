@@ -49,7 +49,7 @@ export class BasketService {
     async add(item: AddItemEntity): Promise<AddProductToBasketRes> {
         const {count, productId, userId} = item;
 
-        const shopItem = await this.shopService.getOneProduct(productId);
+        const shopItem = await this.shopService.getOneItemOfProduct(productId);
         const user = await this.userService.getOneUser(userId);
 
         if (   typeof productId !== 'string'

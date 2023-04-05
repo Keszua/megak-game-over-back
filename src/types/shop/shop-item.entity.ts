@@ -10,15 +10,15 @@ export interface ShortShopItemEntity { // dla wyświetlenia listy produktów
     price: number;
     quantity: number;
     quantityInfinity: boolean;
-    imgUrl?: string | null;
     isPromotion: boolean;
-    photoFn?: string | null;
 }
 
 export interface ShopItemEntity extends  ShortShopItemEntity { // dla wyświetlenia karty produktu
     description: string;
-    show: boolean;
     category: ShopProductCategory;
+    show?: boolean;
+    imgUrl?: string | null;
+    photoFn?: string | null;
 }
 
 export interface StandartShopRes {

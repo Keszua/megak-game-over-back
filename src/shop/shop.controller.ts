@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Res, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '../user/user.entity';
 import { UserObj } from '../decorators/user-obj.decorator';
@@ -34,8 +34,16 @@ export class ShopController {
         return this.shopService.getPromotionProducts();
     }
 
+    @Get('/photo/:id')
+    getPhoto(
+        @Param('id') id: string,
+        @Res() res: any,
+    ): Promise<any> {
+        return this.shopService.getPhoto(id, res);
+    }
+
     @Get('/:id')
-    getOneProducts(
+    getOneProduct(
         @Param('id') id: string,
     ): Promise<GetOneProductsRes> {
         return this.shopService.getOneProduct(id);
@@ -50,6 +58,7 @@ export class ShopController {
         ], {dest: path.join(storageDir(), 'product-photos')},
         )
     )
+
     addProduct(
         @Body() req: AddProductDto,
         @UploadedFiles() files: MulterDiskUploadedFiles,

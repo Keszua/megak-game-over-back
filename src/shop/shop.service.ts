@@ -18,22 +18,34 @@ export class ShopService {
     ) {
     }
 
+    filterShort(shopItem: ShopItem): ShortShopItemEntity {
+        const {id, productName, shortDescription, price, quantity, quantityInfinity, isPromotion } = shopItem;
+        return {id, productName, shortDescription, price, quantity, quantityInfinity, isPromotion};
+    }
+
+    filterDetails(shopItem: ShopItem): ShopItemEntity {
+        const {id, productName, shortDescription, price, quantity, quantityInfinity, isPromotion, description, category } = shopItem;
+        return {id, productName, shortDescription, price, quantity, quantityInfinity, isPromotion, description, category};
+    }
+
     async getAllProducts(): Promise<GetListOfProductsRes> {
-        return await ShopItem.find();
+        return (await ShopItem.find()).map(this.filterShort);
     }
 
     async getCategoryProducts(category: ShopProductCategory): Promise<GetListOfProductsRes> {
-        return await ShopItem.find({where: {category}});
+        return (await ShopItem.find({where: {category}})).map(this.filterShort);
     }
 
     async getPromotionProducts(): Promise<GetListOfProductsRes> {
-        return await ShopItem.find({where: {isPromotion: true}});
+        return (await ShopItem.find({where: {isPromotion: true}})).map(this.filterShort);
     }
 
-    //async getOneProduct(id: string): Promise<GetOneProductsRes> { //TODO - mam problem na froncie z obsługą różnych typów
-    async getOneProduct(id: string): Promise<ShopItem> {
-        const product = await ShopItem.findOne({where: {id}});
+    async getOneProduct(id: string): Promise<GetOneProductsRes> { //TODO - mam problem na froncie z obsługą różnych typów
+    //async getOneProduct(id: string): Promise<ShopItem> {
+        const product = await ShopItem.findOne({where: {id}})
+        
         if (product) {
+            return this.filterDetails(product);
             return product;
         }
         
@@ -41,6 +53,41 @@ export class ShopService {
         //     isSucces: false,
         // }
     }
+
+    async getOneItemOfProduct(id: string): Promise<ShopItem> {
+        const product = await ShopItem.findOne({where: {id}})
+
+        if (product) {
+            return product;
+        }
+    }
+
+    async getPhoto(id: string, res: any): Promise<any>{
+        try {
+            const one = await ShopItem.findOne({where: {id}});
+
+            if (!one) {
+                throw new Error('No object found!');
+            }
+
+            if (!one.photoFn) {
+                throw new Error('No photo in this entity!');
+            }
+
+            res.sendFile(
+                one.photoFn,
+                {
+                    root: path.join(storageDir(), 'product-photos'),
+                }
+            )
+        } catch (err) {
+            res.json( {
+                isSucces: false,
+                message: err,
+            });
+        } 
+    }
+
 
     async addProduct(req: AddProductDto, files: MulterDiskUploadedFiles): Promise<ShortShopItemEntity> {
         const photo = files?.photo?.[0] ?? null;
@@ -57,15 +104,8 @@ export class ShopService {
     
             await shopItem.save();
     
-            return({
-                id: shopItem.id,
-                productName: shopItem.productName,
-                shortDescription: shopItem.shortDescription,
-                price: shopItem.price,
-                quantity: shopItem.quantity,
-                quantityInfinity: shopItem.quantityInfinity,
-                isPromotion: shopItem.isPromotion,
-            })
+            return this.filterShort(shopItem);
+
         } catch (err) {
             try {
                 if (photo) {
