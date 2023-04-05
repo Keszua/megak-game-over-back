@@ -7,8 +7,8 @@ export interface ShortShopItemEntity { // dla wyświetlenia listy produktów
     id: string;
     productName: string;
     shortDescription: string;
-    price: Number;
-    quantity: Number;
+    price: number;
+    quantity: number;
     quantityInfinity: boolean;
     imgUrl?: string | null;
     isPromotion: boolean;

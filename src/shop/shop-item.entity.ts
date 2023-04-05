@@ -30,12 +30,12 @@ export class ShopItem extends BaseEntity {
         scale: 2,
         default: 1,
     })
-    price: Number;
+    price: number;
     
     @Column({
         default: 0,
     })
-    quantity: Number;
+    quantity: number;
     
     @Column({
         default: false,
