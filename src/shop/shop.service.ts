@@ -6,6 +6,10 @@ import { DeleteResult } from 'typeorm';
 import { User } from '../user/user.entity';
 import { AddProductDto } from '../types/shop/add-product.dto';
 import { MulterDiskUploadedFiles } from '../types/shop/files';
+import * as fs from 'fs';
+import * as path from 'path';
+import { storageDir } from '../utils/storage';
+
 
 @Injectable()
 export class ShopService {
@@ -26,7 +30,7 @@ export class ShopService {
         return await ShopItem.find({where: {isPromotion: true}});
     }
 
-    //async getOneProduct(id: string): Promise<GetOneProductsRes> {
+    //async getOneProduct(id: string): Promise<GetOneProductsRes> { //TODO - mam problem na froncie z obsługą różnych typów
     async getOneProduct(id: string): Promise<ShopItem> {
         const product = await ShopItem.findOne({where: {id}});
         if (product) {
@@ -40,28 +44,39 @@ export class ShopService {
 
     async addProduct(req: AddProductDto, files: MulterDiskUploadedFiles): Promise<ShortShopItemEntity> {
         const photo = files?.photo?.[0] ?? null;
-        console.log('photo', photo);
+    
+        try {
+            const shopItem = new ShopItem();
+            shopItem.productName = req.name;
+            shopItem.description = req.description;
+            shopItem.price = req.price;
+    
+            if (photo) {
+                shopItem.photoFn = photo.filename;
+            }
+    
+            await shopItem.save();
+    
+            return({
+                id: shopItem.id,
+                productName: shopItem.productName,
+                shortDescription: shopItem.shortDescription,
+                price: shopItem.price,
+                quantity: shopItem.quantity,
+                quantityInfinity: shopItem.quantityInfinity,
+                isPromotion: shopItem.isPromotion,
+            })
+        } catch (err) {
+            try {
+                if (photo) {
+                    fs.unlinkSync(
+                        path.join(storageDir(), 'product-photos', photo.filename),
+                    );
+                }
+            } catch (r2) { }
 
-        const shopItem = new ShopItem();
-        shopItem.productName = req.name;
-        shopItem.description = req.description;
-        shopItem.price = req.price;
-
-        if (photo) {
-            shopItem.photoFn = photo.filename;
+            throw new Error(`Problem z dodaniem nowego produktu ${err}`);
         }
-
-        await shopItem.save();
-
-        return({
-            id: shopItem.id,
-            productName: shopItem.productName,
-            shortDescription: shopItem.shortDescription,
-            price: shopItem.price,
-            quantity: shopItem.quantity,
-            quantityInfinity: shopItem.quantityInfinity,
-            isPromotion: shopItem.isPromotion,
-        })
     }
 
     async createNewProducts(newItem: NewShopItemEntity, user: User): Promise<CreateNewProductsRes> {
