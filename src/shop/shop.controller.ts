@@ -7,7 +7,7 @@ import { ShopService } from './shop.service';
 import { AddProductDto } from 'src/types/shop/add-product.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import * as path from 'path';
-import { storageDir } from '../utils/storage';
+import { multerStorage, storageDir } from '../utils/storage';
 import { MulterDiskUploadedFiles } from '../types/shop/files';
 
 @Controller('/shop')
@@ -55,7 +55,7 @@ export class ShopController {
             {
                 name: 'photo', maxCount: 1,
             },
-        ], {dest: path.join(storageDir(), 'product-photos')},
+        ], {storage: multerStorage(path.join(storageDir(), 'product-photos'))},
         )
     )
 
