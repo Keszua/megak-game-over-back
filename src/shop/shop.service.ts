@@ -1,10 +1,11 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { BasketService } from '../basket/basket.service';
-import { CreateNewProductsRes, DelOneProductsRes, GetListOfProductsRes, GetOneProductsRes, NewShopItemEntity, ShopItemEntity, ShopProductCategory, UpdateOneProductsRes, UserPermissions } from '../types';
+import { CreateNewProductsRes, DelOneProductsRes, GetListOfProductsRes, GetOneProductsRes, NewShopItemEntity, ShopItemEntity, ShopProductCategory, ShortShopItemEntity, UpdateOneProductsRes, UserPermissions } from '../types';
 import { ShopItem } from './shop-item.entity';
-import { DeleteResult, Repository } from 'typeorm';
-import { User } from 'src/user/user.entity';
-import { AddProductDto } from 'src/types/shop/add-product.dto';
+import { DeleteResult } from 'typeorm';
+import { User } from '../user/user.entity';
+import { AddProductDto } from '../types/shop/add-product.dto';
+import { MulterDiskUploadedFiles } from '../types/shop/files';
 
 @Injectable()
 export class ShopService {
@@ -37,14 +38,29 @@ export class ShopService {
         // }
     }
 
-    //async addProduct(req: AddProductDto): Promise<ShopItemEntity> {
-    async addProduct(req: AddProductDto): Promise<any> {
-        console.log({req});
+    async addProduct(req: AddProductDto, files: MulterDiskUploadedFiles): Promise<ShortShopItemEntity> {
+        const photo = files?.photo?.[0] ?? null;
+        console.log('photo', photo);
+
+        const shopItem = new ShopItem();
+        shopItem.productName = req.name;
+        shopItem.description = req.description;
+        shopItem.price = req.price;
+
+        if (photo) {
+            shopItem.photoFn = photo.filename;
+        }
+
+        await shopItem.save();
 
         return({
-            description: 'string',
-            show: true,
-            category: ShopProductCategory.PRODUCT,
+            id: shopItem.id,
+            productName: shopItem.productName,
+            shortDescription: shopItem.shortDescription,
+            price: shopItem.price,
+            quantity: shopItem.quantity,
+            quantityInfinity: shopItem.quantityInfinity,
+            isPromotion: shopItem.isPromotion,
         })
     }
 
@@ -57,7 +73,6 @@ export class ShopService {
                 message: "Nie wykryto użytkownika",
             }
         }
-
 
         if (user.permissions !== UserPermissions.ADMIN) {
             return {

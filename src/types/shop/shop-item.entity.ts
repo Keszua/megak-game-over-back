@@ -10,8 +10,9 @@ export interface ShortShopItemEntity { // dla wyświetlenia listy produktów
     price: Number;
     quantity: Number;
     quantityInfinity: boolean;
-    imgUrl: string | null;
+    imgUrl?: string | null;
     isPromotion: boolean;
+    photoFn?: string | null;
 }
 
 export interface ShopItemEntity extends  ShortShopItemEntity { // dla wyświetlenia karty produktu
@@ -27,7 +28,7 @@ export interface StandartShopRes {
 
 export type NewShopItemEntity = Omit<ShopItemEntity, 'id'>; // dla tworzenia nowego rekordu w bazie
 
-export type GetListOfProductsRes = ShopItemEntity[];
+export type GetListOfProductsRes = ShortShopItemEntity[];
 
 export type GetOneProductsRes = ShopItemEntity | {
     isSucces: false,
