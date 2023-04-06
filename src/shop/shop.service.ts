@@ -1,6 +1,6 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { BasketService } from '../basket/basket.service';
-import { CreateNewProductsRes, DelOneProductsRes, GetListOfProductsRes, GetOneProductsRes, NewShopItemEntity, ShopItemEntity, ShopProductCategory, ShortShopItemEntity, UpdateOneProductsRes, UserPermissions } from '../types';
+import { CreateNewProductsRes, DelOneProductsRes, GetListOfProductsRes, GetOneProductsRes, NewShopItemEntity, ShopItemEntity, ShopProductCategory, ShortShopItemEntity, StandartShopRes, UpdateOneProductsRes, UserPermissions } from '../types';
 import { ShopItem } from './shop-item.entity';
 import { DeleteResult } from 'typeorm';
 import { User } from '../user/user.entity';
@@ -119,9 +119,8 @@ export class ShopService {
         }
     }
 
-    async createNewProducts(newItem: NewShopItemEntity, user: User): Promise<CreateNewProductsRes> {
-        const { productName, shortDescription, price, quantity, quantityInfinity, imgUrl, isPromotion, description, show } = newItem;
-    
+
+    checkUserToCreateAndUpdateElement = (user: User): StandartShopRes => {
         if (!user) {
             return {
                 isSucces: false,
@@ -135,6 +134,14 @@ export class ShopService {
                 message: "Nie masz uprawnień",
             }
         }
+
+        return ({
+            isSucces: true,
+        })
+    }
+
+    checkElementToCreateAndUpdateElement = (item: NewShopItemEntity): StandartShopRes => {
+        const { productName, shortDescription, price, quantity, quantityInfinity, imgUrl, isPromotion, description, show } = item;
 
         if (productName.length > 60) {
             return ({
@@ -171,6 +178,24 @@ export class ShopService {
             })
         }
 
+        return ({
+            isSucces: true,
+        })
+    }
+
+    async createNewProducts(newItem: NewShopItemEntity, user: User): Promise<CreateNewProductsRes> {
+        const heckUser = this.checkUserToCreateAndUpdateElement(user);
+        if (heckUser.isSucces === false) {
+            return heckUser;
+        }
+        
+        const heckItem: StandartShopRes = this.checkElementToCreateAndUpdateElement(newItem);
+        if (heckItem.isSucces === false) {
+            return heckItem;
+        }
+
+        const { productName, shortDescription, price, quantity, quantityInfinity, imgUrl, isPromotion, description, show } = newItem;
+
         const item = new ShopItem();
         item.productName = productName;
         item.shortDescription = shortDescription;
@@ -191,17 +216,20 @@ export class ShopService {
                 isSucces: false,
             })
         }
-        
     }
 
     async updateProduct(item: ShopItemEntity, user: User): Promise<UpdateOneProductsRes> {
-        const { id } = item;
-
-        if (user.permissions !== UserPermissions.ADMIN) {
-            return {
-                isSucces: false,
-            }
+        const heckUser = this.checkUserToCreateAndUpdateElement(user);
+        if (heckUser.isSucces === false) {
+            return heckUser;
         }
+
+        const heckItem: StandartShopRes = this.checkElementToCreateAndUpdateElement(item);
+        if (heckItem.isSucces === false) {
+            return heckItem;
+        }
+
+        const { id, productName, shortDescription, price, quantity, quantityInfinity, imgUrl, isPromotion, description, show } = item;
 
         try {
             await ShopItem.update(id, {
