@@ -7,17 +7,18 @@ export interface ShortShopItemEntity { // dla wyświetlenia listy produktów
     id: string;
     productName: string;
     shortDescription: string;
-    price: Number;
-    quantity: Number;
+    price: number;
+    quantity: number;
     quantityInfinity: boolean;
-    imgUrl: string | null;
     isPromotion: boolean;
 }
 
 export interface ShopItemEntity extends  ShortShopItemEntity { // dla wyświetlenia karty produktu
     description: string;
-    show: boolean;
     category: ShopProductCategory;
+    show?: boolean;
+    imgUrl?: string | null;
+    photoFn?: string | null;
 }
 
 export interface StandartShopRes {
@@ -27,7 +28,7 @@ export interface StandartShopRes {
 
 export type NewShopItemEntity = Omit<ShopItemEntity, 'id'>; // dla tworzenia nowego rekordu w bazie
 
-export type GetListOfProductsRes = ShopItemEntity[];
+export type GetListOfProductsRes = ShortShopItemEntity[];
 
 export type GetOneProductsRes = ShopItemEntity | {
     isSucces: false,

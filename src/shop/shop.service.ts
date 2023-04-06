@@ -1,10 +1,15 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { BasketService } from '../basket/basket.service';
-import { CreateNewProductsRes, DelOneProductsRes, GetListOfProductsRes, GetOneProductsRes, NewShopItemEntity, ShopItemEntity, ShopProductCategory, UpdateOneProductsRes, UserPermissions } from '../types';
-import { InjectRepository } from '@nestjs/typeorm';
+import { CreateNewProductsRes, DelOneProductsRes, GetListOfProductsRes, GetOneProductsRes, NewShopItemEntity, ShopItemEntity, ShopProductCategory, ShortShopItemEntity, UpdateOneProductsRes, UserPermissions } from '../types';
 import { ShopItem } from './shop-item.entity';
-import { DeleteResult, Repository } from 'typeorm';
-import { User } from 'src/user/user.entity';
+import { DeleteResult } from 'typeorm';
+import { User } from '../user/user.entity';
+import { AddProductDto } from '../types/shop/add-product.dto';
+import { MulterDiskUploadedFiles } from '../types/shop/files';
+import * as fs from 'fs';
+import * as path from 'path';
+import { storageDir } from '../utils/storage';
+
 
 @Injectable()
 export class ShopService {
@@ -13,28 +18,105 @@ export class ShopService {
     ) {
     }
 
+    filterShort(shopItem: ShopItem): ShortShopItemEntity {
+        const {id, productName, shortDescription, price, quantity, quantityInfinity, isPromotion } = shopItem;
+        return {id, productName, shortDescription, price, quantity, quantityInfinity, isPromotion};
+    }
+
+    filterDetails(shopItem: ShopItem): ShopItemEntity {
+        const {id, productName, shortDescription, price, quantity, quantityInfinity, isPromotion, description, category } = shopItem;
+        return {id, productName, shortDescription, price, quantity, quantityInfinity, isPromotion, description, category};
+    }
+
     async getAllProducts(): Promise<GetListOfProductsRes> {
-        return await ShopItem.find();
+        return (await ShopItem.find()).map(this.filterShort);
     }
 
     async getCategoryProducts(category: ShopProductCategory): Promise<GetListOfProductsRes> {
-        return await ShopItem.find({where: {category}});
+        return (await ShopItem.find({where: {category}})).map(this.filterShort);
     }
 
     async getPromotionProducts(): Promise<GetListOfProductsRes> {
-        return await ShopItem.find({where: {isPromotion: true}});
+        return (await ShopItem.find({where: {isPromotion: true}})).map(this.filterShort);
     }
 
-    //async getOneProduct(id: string): Promise<GetOneProductsRes> {
-    async getOneProduct(id: string): Promise<ShopItem> {
-        const product = await ShopItem.findOne({where: {id}});
+    async getOneProduct(id: string): Promise<GetOneProductsRes> { //TODO - mam problem na froncie z obsługą różnych typów
+    //async getOneProduct(id: string): Promise<ShopItem> {
+        const product = await ShopItem.findOne({where: {id}})
+        
         if (product) {
+            return this.filterDetails(product);
             return product;
         }
         
         // return {
         //     isSucces: false,
         // }
+    }
+
+    async getOneItemOfProduct(id: string): Promise<ShopItem> {
+        const product = await ShopItem.findOne({where: {id}})
+
+        if (product) {
+            return product;
+        }
+    }
+
+    async getPhoto(id: string, res: any): Promise<any>{
+        try {
+            const one = await ShopItem.findOne({where: {id}});
+
+            if (!one) {
+                throw new Error('No object found!');
+            }
+
+            if (!one.photoFn) {
+                throw new Error('No photo in this entity!');
+            }
+
+            res.sendFile(
+                one.photoFn,
+                {
+                    root: path.join(storageDir(), 'product-photos'),
+                }
+            )
+        } catch (err) {
+            res.json( {
+                isSucces: false,
+                message: err,
+            });
+        } 
+    }
+
+
+    async addProduct(req: AddProductDto, files: MulterDiskUploadedFiles): Promise<ShortShopItemEntity> {
+        const photo = files?.photo?.[0] ?? null;
+    
+        try {
+            const shopItem = new ShopItem();
+            shopItem.productName = req.name;
+            shopItem.description = req.description;
+            shopItem.price = req.price;
+    
+            if (photo) {
+                shopItem.photoFn = photo.filename;
+            }
+    
+            await shopItem.save();
+    
+            return this.filterShort(shopItem);
+
+        } catch (err) {
+            try {
+                if (photo) {
+                    fs.unlinkSync(
+                        path.join(storageDir(), 'product-photos', photo.filename),
+                    );
+                }
+            } catch (r2) { }
+
+            throw new Error(`Problem z dodaniem nowego produktu ${err}`);
+        }
     }
 
     async createNewProducts(newItem: NewShopItemEntity, user: User): Promise<CreateNewProductsRes> {
@@ -46,7 +128,6 @@ export class ShopService {
                 message: "Nie wykryto użytkownika",
             }
         }
-
 
         if (user.permissions !== UserPermissions.ADMIN) {
             return {

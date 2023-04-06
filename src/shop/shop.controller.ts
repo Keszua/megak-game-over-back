@@ -1,9 +1,14 @@
-import { Body, Controller, Delete, Get, Inject, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Res, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '../user/user.entity';
 import { UserObj } from '../decorators/user-obj.decorator';
-import { CreateNewProductsRes, DelOneProductsRes, GetListOfProductsRes, GetOneProductsRes, NewShopItemEntity, ShopItemEntity, ShopProductCategory, UpdateOneProductsRes } from '../types';
+import { CreateNewProductsRes, DelOneProductsRes, GetListOfProductsRes, GetOneProductsRes, NewShopItemEntity, ShopItemEntity, ShopProductCategory, ShortShopItemEntity, UpdateOneProductsRes } from '../types';
 import { ShopService } from './shop.service';
+import { AddProductDto } from 'src/types/shop/add-product.dto';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import * as path from 'path';
+import { multerStorage, storageDir } from '../utils/storage';
+import { MulterDiskUploadedFiles } from '../types/shop/files';
 
 @Controller('/shop')
 export class ShopController {
@@ -29,12 +34,38 @@ export class ShopController {
         return this.shopService.getPromotionProducts();
     }
 
+    @Get('/photo/:id')
+    getPhoto(
+        @Param('id') id: string,
+        @Res() res: any,
+    ): Promise<any> {
+        return this.shopService.getPhoto(id, res);
+    }
+
     @Get('/:id')
-    getOneProducts(
+    getOneProduct(
         @Param('id') id: string,
     ): Promise<GetOneProductsRes> {
         return this.shopService.getOneProduct(id);
     }
+
+    @Post('/photo')
+    @UseInterceptors(
+        FileFieldsInterceptor([
+            {
+                name: 'photo', maxCount: 1,
+            },
+        ], {storage: multerStorage(path.join(storageDir(), 'product-photos'))},
+        )
+    )
+
+    addProduct(
+        @Body() req: AddProductDto,
+        @UploadedFiles() files: MulterDiskUploadedFiles,
+    ): Promise<ShortShopItemEntity> { 
+        return this.shopService.addProduct(req, files);
+    }
+
 
     @Post('/')
     @UseGuards(AuthGuard('jwt'))

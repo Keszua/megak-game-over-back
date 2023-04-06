@@ -30,12 +30,12 @@ export class ShopItem extends BaseEntity {
         scale: 2,
         default: 1,
     })
-    price: Number;
+    price: number;
     
     @Column({
         default: 0,
     })
-    quantity: Number;
+    quantity: number;
     
     @Column({
         default: false,
@@ -53,6 +53,12 @@ export class ShopItem extends BaseEntity {
         default: 0,
     })
     boughtCounter: number;
+
+    @Column({
+        default: null,
+        nullable: true,
+    })
+    photoFn: string;
 
     // pola dla administratora ------------------------------------------------
     @Column({
@@ -82,6 +88,7 @@ export class ShopItem extends BaseEntity {
     })
     wasEverBought: boolean;
 
+    // relacje ----------------------------------------------------------------
     @OneToMany(type => BasketItem, entity => entity.shopItem)
     itemsInBasket: BasketItem[];
 }
