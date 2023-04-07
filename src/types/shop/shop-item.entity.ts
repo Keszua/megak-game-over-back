@@ -34,7 +34,14 @@ export type GetOneProductsRes = ShopItemEntity | {
     isSucces: false,
 };
 
-export type CreateNewProductsRes = ShopItemEntity | StandartShopRes;
+export type CreateNewProductsRes = {
+    isSucces: true,
+    id: string,
+    message?: string,
+} | {
+    isSucces: false,
+    message: string,
+};
 
 export interface UpdateOneProductsRes {
     isSucces: boolean,
@@ -43,4 +50,5 @@ export interface UpdateOneProductsRes {
 
 export interface DelOneProductsRes {
     isSucces: boolean,
+    message?: string,
 };

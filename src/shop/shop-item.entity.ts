@@ -43,13 +43,6 @@ export class ShopItem extends BaseEntity {
     quantityInfinity: boolean;
     
     @Column({
-        length: 255,
-        default: null,
-        nullable: true,
-    })
-    imgUrl: string | null;
-
-    @Column({
         default: 0,
     })
     boughtCounter: number;

@@ -2,9 +2,9 @@ import { Body, Controller, Delete, Get, Inject, Param, Post, Put, Res, UploadedF
 import { AuthGuard } from '@nestjs/passport';
 import { User } from '../user/user.entity';
 import { UserObj } from '../decorators/user-obj.decorator';
-import { CreateNewProductsRes, DelOneProductsRes, GetListOfProductsRes, GetOneProductsRes, NewShopItemEntity, ShopItemEntity, ShopProductCategory, ShortShopItemEntity, UpdateOneProductsRes } from '../types';
+import { CreateNewProductsRes, DelOneProductsRes, GetListOfProductsRes, GetOneProductsRes, NewShopItemEntity, ShopItemEntity, ShopProductCategory, StandartShopRes, UpdateOneProductsRes } from '../types';
 import { ShopService } from './shop.service';
-import { AddProductDto } from 'src/types/shop/add-product.dto';
+import { AddPhotoToProductDto } from 'src/types/shop/add-product.dto';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import * as path from 'path';
 import { multerStorage, storageDir } from '../utils/storage';
@@ -58,17 +58,15 @@ export class ShopController {
         ], {storage: multerStorage(path.join(storageDir(), 'product-photos'))},
         )
     )
-
-    addProduct(
-        @Body() req: AddProductDto,
+    addPhotoToProduct(
+        @Body() req: AddPhotoToProductDto,
         @UploadedFiles() files: MulterDiskUploadedFiles,
-    ): Promise<ShortShopItemEntity> { 
-        return this.shopService.addProduct(req, files);
+    ): Promise<StandartShopRes> { 
+        return this.shopService.addPhotoToProduct(req, files);
     }
 
-
     @Post('/')
-    @UseGuards(AuthGuard('jwt'))
+    // @UseGuards(AuthGuard('jwt'))
     createNewProducts(
         @Body() newItem: NewShopItemEntity,
         @UserObj() user: User,
@@ -77,7 +75,7 @@ export class ShopController {
     }
 
     @Put('/')
-    @UseGuards(AuthGuard('jwt'))
+    //@UseGuards(AuthGuard('jwt'))
     updateProduct(
         @Body() item: ShopItemEntity,
         @UserObj() user: User,

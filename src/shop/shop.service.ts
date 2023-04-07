@@ -4,7 +4,7 @@ import { CreateNewProductsRes, DelOneProductsRes, GetListOfProductsRes, GetOnePr
 import { ShopItem } from './shop-item.entity';
 import { DeleteResult } from 'typeorm';
 import { User } from '../user/user.entity';
-import { AddProductDto } from '../types/shop/add-product.dto';
+import { AddPhotoToProductDto } from '../types/shop/add-product.dto';
 import { MulterDiskUploadedFiles } from '../types/shop/files';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -88,24 +88,24 @@ export class ShopService {
         } 
     }
 
-
-    async addProduct(req: AddProductDto, files: MulterDiskUploadedFiles): Promise<ShortShopItemEntity> {
+    async addPhotoToProduct(req: AddPhotoToProductDto, files: MulterDiskUploadedFiles): Promise<StandartShopRes> {
         const photo = files?.photo?.[0] ?? null;
     
         try {
-            const shopItem = new ShopItem();
-            shopItem.productName = req.name;
-            shopItem.description = req.description;
-            shopItem.price = req.price;
-    
             if (photo) {
-                shopItem.photoFn = photo.filename;
+                await ShopItem.update(req.id, {
+                    photoFn: photo.filename,
+                })
+            } else {
+                return {
+                    isSucces: false,
+                    message: "Brak fotografii",
+                }
             }
     
-            await shopItem.save();
-    
-            return this.filterShort(shopItem);
-
+            return {
+                isSucces: true,
+            }
         } catch (err) {
             try {
                 if (photo) {
@@ -115,12 +115,16 @@ export class ShopService {
                 }
             } catch (r2) { }
 
-            throw new Error(`Problem z dodaniem nowego produktu ${err}`);
+            //throw new Error(`Problem z dodaniem fotografii ${err}`);
+            return {
+                isSucces: false,
+                message: "Problem z dodaniem fotografii",
+            }
         }
     }
 
 
-    checkUserToCreateAndUpdateElement = (user: User): StandartShopRes => {
+    checkUserPermission = (user: User, perm: UserPermissions): StandartShopRes => {
         if (!user) {
             return {
                 isSucces: false,
@@ -128,19 +132,28 @@ export class ShopService {
             }
         }
 
-        if (user.permissions !== UserPermissions.ADMIN) {
-            return {
-                isSucces: false,
-                message: "Nie masz uprawnień",
-            }
+        switch (perm) {
+            case UserPermissions.ADMIN:
+                if (user.permissions === UserPermissions.ADMIN) {
+                    return ({
+                        isSucces: true,
+                    })
+                };
+            case UserPermissions.USER:
+                if (user.permissions === UserPermissions.USER || user.permissions === UserPermissions.ADMIN) {
+                    return ({
+                        isSucces: true,
+                    })
+                };
+            default:
+                return {
+                    isSucces: false,
+                    message: "Nie masz uprawnień",
+                };
         }
-
-        return ({
-            isSucces: true,
-        })
     }
 
-    checkElementToCreateAndUpdateElement = (item: NewShopItemEntity): StandartShopRes => {
+    checkItem = (item: NewShopItemEntity): StandartShopRes => {
         const { productName, shortDescription, price, quantity, quantityInfinity, imgUrl, isPromotion, description, show } = item;
 
         if (productName.length > 60) {
@@ -184,23 +197,30 @@ export class ShopService {
     }
 
     async createNewProducts(newItem: NewShopItemEntity, user: User): Promise<CreateNewProductsRes> {
-        const heckUser = this.checkUserToCreateAndUpdateElement(user);
-        if (heckUser.isSucces === false) {
-            return heckUser;
+        const checkUser = this.checkUserPermission(user, UserPermissions.ADMIN);
+        if (checkUser.isSucces === false) {
+            return ({
+                isSucces: false,
+                message: checkUser.message,
+            })
         }
         
-        const heckItem: StandartShopRes = this.checkElementToCreateAndUpdateElement(newItem);
-        if (heckItem.isSucces === false) {
-            return heckItem;
+        const checkItem: StandartShopRes = this.checkItem(newItem);
+        if (checkItem.isSucces === false) {
+            return { 
+                isSucces: false,
+                message: checkItem.message,
+            };
         }
 
-        const { productName, shortDescription, price, quantity, quantityInfinity, imgUrl, isPromotion, description, show } = newItem;
+        const { productName, shortDescription, price, quantity, quantityInfinity, isPromotion, description, show } = newItem;
 
         const item = new ShopItem();
         item.productName = productName;
         item.shortDescription = shortDescription;
         item.price = price;
         item.quantity = quantity;
+        item.quantityInfinity = quantityInfinity;
         item.isPromotion = isPromotion;
         item.description = description;
         item.show = show;
@@ -208,31 +228,31 @@ export class ShopService {
         try {
             await item.save();
 
-            return (
-                item
-            )
+            return ({
+                isSucces: true,
+                id: item.id,
+            })
         } catch (err) {
             return ({
                 isSucces: false,
+                message: "Problem z dodaniem nowego produktu.",
             })
         }
     }
 
     async updateProduct(item: ShopItemEntity, user: User): Promise<UpdateOneProductsRes> {
-        const heckUser = this.checkUserToCreateAndUpdateElement(user);
-        if (heckUser.isSucces === false) {
-            return heckUser;
+        const checkUser = this.checkUserPermission(user, UserPermissions.ADMIN);
+        if (checkUser.isSucces === false) {
+            return checkUser;
         }
 
-        const heckItem: StandartShopRes = this.checkElementToCreateAndUpdateElement(item);
-        if (heckItem.isSucces === false) {
-            return heckItem;
+        const checkItem: StandartShopRes = this.checkItem(item);
+        if (checkItem.isSucces === false) {
+            return checkItem;
         }
-
-        const { id, productName, shortDescription, price, quantity, quantityInfinity, imgUrl, isPromotion, description, show } = item;
 
         try {
-            await ShopItem.update(id, {
+            await ShopItem.update(item.id, {
             ...item
             });
 
@@ -258,15 +278,14 @@ export class ShopService {
         await item.save();
     }
 
-    async hasProduct(name: string): Promise<boolean> { //TODO przerobić name an ID
-        return (await this.getAllProducts()).some((item: any) => item.productName === name);
+    async hasProduct(id: string): Promise<boolean> {
+        return (await this.getAllProducts()).some((item: any) => item.id === id);
     }
 
     async removeOneProduct(id: string, user: User): Promise<DelOneProductsRes> {
-        if (user.permissions !== UserPermissions.ADMIN) {
-            return {
-                isSucces: false,
-            }
+        const checkUser = this.checkUserPermission(user, UserPermissions.ADMIN);
+        if (checkUser.isSucces === false) {
+            return checkUser;
         }
 
         const res: DeleteResult = await ShopItem.delete(id);

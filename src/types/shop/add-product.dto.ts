@@ -1,12 +1,6 @@
 import { IsNumber, IsString } from "class-validator";
 
-export class AddProductDto {
+export class AddPhotoToProductDto {
     @IsString()
-    name: string;
-    
-    @IsString()
-    description: string;
-    
-    @IsNumber()
-    price: number;
+    id: string;
 }
