@@ -66,7 +66,7 @@ export class ShopController {
     }
 
     @Post('/')
-    // @UseGuards(AuthGuard('jwt'))
+    @UseGuards(AuthGuard('jwt'))
     createNewProducts(
         @Body() newItem: NewShopItemEntity,
         @UserObj() user: User,
@@ -75,7 +75,7 @@ export class ShopController {
     }
 
     @Put('/')
-    //@UseGuards(AuthGuard('jwt'))
+    @UseGuards(AuthGuard('jwt'))
     updateProduct(
         @Body() item: ShopItemEntity,
         @UserObj() user: User,

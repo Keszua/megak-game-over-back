@@ -60,6 +60,7 @@ export class AuthService {
             isSucces: true,
             login: user.login,
             role: user.permissions,
+            id: user.id,
         } as AuthLoginResponse);
     } catch (e) {
         return res.json({ 

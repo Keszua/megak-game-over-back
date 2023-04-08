@@ -2,8 +2,9 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { ShopItem } from 'src/shop/shop-item.entity';
 import { UserService } from '../user/user.service';
 import { ShopService } from '../shop/shop.service';
-import { AddItemEntity, AddProductToBasketRes, GetTotalBasketPriceRes, ListProductFromBasketRes, RemoveProductFromBasketRes } from '../types';
+import { AddItemEntity, AddProductToBasketRes, GetTotalBasketPriceRes, ListProductFromBasketRes, OneItemInBasketRes, RemoveProductFromBasketRes, UserPermissions } from '../types';
 import { BasketItem } from './item-in-basket.entity';
+import { User } from '../user/user.entity';
 
 @Injectable()
 export class BasketService {
@@ -13,8 +14,24 @@ export class BasketService {
     ) {
     }
 
+    filter(product: BasketItem): OneItemInBasketRes {
+
+        return { id: product.id,
+            count: product.count,
+            price: product.shopItem.price,
+            productName: product.shopItem.productName,
+            shortDescription: product.shopItem.shortDescription,
+            idProduct: product.shopItem.id,
+            isPromotion: product.shopItem.isPromotion,
+        }
+    }
+
     async list(): Promise<ListProductFromBasketRes> {
-        return BasketItem.find();
+        const products: BasketItem[] =  await BasketItem.find();
+
+        const retObject: ListProductFromBasketRes = products.map(this.filter);
+
+        return retObject;
     }
 
     async getAll(): Promise<BasketItem[]> {
@@ -23,14 +40,14 @@ export class BasketService {
         });
     }
 
-    async getAllForUser(userId: string): Promise<BasketItem[]> {
+    async getAllForUser(userId: string): Promise<ListProductFromBasketRes> {
         const user = await this.userService.getOneUser(userId);
 
         if (!user) {
             throw new Error('User not found!');
         }
 
-        return BasketItem.find({
+        const products: BasketItem[] = await BasketItem.find({
             where: { 
                 user: {
                     id: userId,
@@ -38,17 +55,25 @@ export class BasketService {
             },
             relations: ['shopItem'],
         });
+
+        const retObject: ListProductFromBasketRes = products.map(this.filter);
+
+        return retObject;
     }
     
-    async getAllForAdmin(): Promise<BasketItem[]> {
+    async getAllForAdmin(user: User): Promise<BasketItem[]> {
+        const checkUser = this.shopService.checkUserPermission(user, UserPermissions.ADMIN);
+        if (checkUser.isSucces === false) {
+            return [];
+        }
+
         return BasketItem.find({
-            relations: ['shopItem', 'user'],
+            relations: ['shopItem'],
         });
     }
     
     async add(item: AddItemEntity): Promise<AddProductToBasketRes> {
         const {count, productId, userId} = item;
-
         const shopItem = await this.shopService.getOneItemOfProduct(productId);
         const user = await this.userService.getOneUser(userId);
 
@@ -63,6 +88,7 @@ export class BasketService {
         ) {
             return {
                 isSuccess: false,
+                message: "Sprawdz dane wejściowe",
             };
         }
 
@@ -86,6 +112,7 @@ export class BasketService {
         } catch (err) {
             return {
                 isSuccess: false,
+                message: "Nie udało się dodać produktu do koszyka",
             };
         }
     }
@@ -119,11 +146,10 @@ export class BasketService {
         };
     }
 
-
     async getTotalPrice(userId: string): Promise<GetTotalBasketPriceRes> {
         const items = await this.getAllForUser(userId);
 
-        const price = (await Promise.all(items.map(async item => Number(item.shopItem?.price) * item.count * 1.23 )))
+        const price = (await Promise.all(items.map(async item => Number(item.price) * item.count * 1.23 )))
             .reduce((prev, curr) => prev + curr, 0);
 
         return {
@@ -131,10 +157,6 @@ export class BasketService {
             price, 
         }
     }
-
-    // async countPromo(): Promise<number> {
-    //     return ((await this.getTotalPrice()).price) > 10 ? 1 : 0;
-    // }
 
     async clearBasket(userId: string) {
         const user = await this.userService.getOneUser(userId);

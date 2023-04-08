@@ -4,20 +4,24 @@ export interface AddItemEntity {
     count: number;
 }
 
-export interface OneItemInBasket {
+export interface OneItemInBasketRes {
     id: string;
+    idProduct: string;
+    productName: string;
     count: number;
+    price: number;
+    shortDescription: string;
+    isPromotion: boolean;
 }
 
-export type GetBasketResponse = OneItemInBasket[];
-
-export type ListProductFromBasketRes = OneItemInBasket[];
+export type ListProductFromBasketRes = OneItemInBasketRes[];
 
 export type AddProductToBasketRes = {
     isSuccess: true;
     id: string;
 } | {
     isSuccess: false;
+    message: string,
 }
 
 export interface RemoveProductFromBasketRes {

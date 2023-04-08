@@ -46,12 +46,11 @@ export class ShopService {
         
         if (product) {
             return this.filterDetails(product);
-            return product;
         }
         
-        // return {
-        //     isSucces: false,
-        // }
+        return {
+            isSucces: false,
+        }
     }
 
     async getOneItemOfProduct(id: string): Promise<ShopItem> {
@@ -67,11 +66,19 @@ export class ShopService {
             const one = await ShopItem.findOne({where: {id}});
 
             if (!one) {
-                throw new Error('No object found!');
+                res.json( {
+                    isSucces: false,
+                    message: "Nie odnaleziono produktu",
+                });
+                // throw new Error('No object found!');
             }
 
             if (!one.photoFn) {
-                throw new Error('No photo in this entity!');
+                res.json( {
+                    isSucces: false,
+                    message: "Nie odnaleziono obrazu",
+                });
+                // throw new Error('No photo in this entity!');
             }
 
             res.sendFile(

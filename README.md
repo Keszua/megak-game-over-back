@@ -79,14 +79,12 @@ Przykład strony dla zakładu usługowego.
   - [x] Wyszukiwanie ogłoszeń
   - [x] Dodawanie ogłoszeń
 - [x] Dodanie modułu koszyka
-- [ ] Dodanie endpiontów dla koszyka
-  - [ ] Zaprojektowanie struktury bazy
-  - [ ] Dodawanie rekordu koszyka
-  - [ ] Zwracanie zawartości koszyka
+- [x] Dodanie endpiontów dla koszyka
+  - [x] Zaprojektowanie struktury bazy
+  - [x] Dodawanie rekordu koszyka
+  - [x] Zwracanie zawartości koszyka
   - [ ] Zapamiętywanie historii koszyka/zakupów
 - [ ] Globalna obsługa błędów
-
-
 
 
 <hr/>

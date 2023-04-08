@@ -14,6 +14,7 @@ export type AuthLoginResponse = {
     isSucces: true;
     login: string;
     role: UserPermissions;
+    id: string;
 } | {
     isSucces: false;
     message: AuthLoginResProblem | string; // informacja zwrotna - dla czego sie nie powiodło.
