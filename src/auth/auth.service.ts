@@ -59,6 +59,8 @@ export class AuthService {
         .json({ 
             isSucces: true,
             login: user.login,
+            role: user.permissions,
+            id: user.id,
         } as AuthLoginResponse);
     } catch (e) {
         return res.json({ 
@@ -84,35 +86,13 @@ export class AuthService {
     }
   }
 
-  async islogged(req: any, res: Response): Promise<any> {
-    //console.log('cookies', req.cookies);
-
-    const token = req.cookies.jwt;
-    if(token) {
-        const decodeToken: any = verify(token, config.acSecretKeyJwt);
-        //console.log("decodeToken", decodeToken);
-
-        try {
-            const findUser = await User.findOneBy({
-                currentTokenId: decodeToken.id,
-            });
-            //console.log("useR", useR);
-
-            return res.json({
-                isSucces: true,
-                login: findUser.login,
-            } as AuthLoginResponse);
-        } catch (err) {
-            return res.json({
-                isSucces: false,
-                message: "Unauthorized",
-            } as AuthLoginResponse);
-        }
+  async islogged(user: User): Promise<AuthLoginResponse> {
+    return {
+        isSucces: true,
+        login: user.login,
+        role: user.permissions,
+        id: user.id,
     }
-
-    return res.json({
-        isSucces: false,
-        message: "Unauthorized",
-    } as AuthLoginResponse);
   }
+
 }

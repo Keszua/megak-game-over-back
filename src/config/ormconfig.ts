@@ -10,7 +10,8 @@ export const ormConfig: MysqlConnectionOptions = {
 	database: config.dbDatabase,
 	entities: [
 	  'dist/**/*.entity{.ts,.js}',
-	], 
+	],
+    bigNumberStrings: false,
 	logging: true, 
 	synchronize: true,
     charset: "utf8mb4_unicode_ci",

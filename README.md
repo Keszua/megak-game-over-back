@@ -10,15 +10,27 @@
 Projekt na zaliczenie drugiej edycji [Mega Kursu JavaScriptu MegaK](https://www.megak.pl)
 
 To jest **back end** napisany w ***node.js*** (framework *NestJS*)
+
 Do prawidłowego działania, wymagany jest **front end** dostępny pod [tym adresem](https://github.com/Keszua/megak-game-over-front/)
 
 <hr/>
 
 ## Opis projektu
 Przykład strony dla zakładu usługowego.
-- rejstracja, logowanie, autoryzacja i autentykacja
+- obsługa bazy danych mySQL (z pomocą typeORM)
+- rejestracja
+    - przechowywanie użytkowników w bazie
+    - sprawdzanie czy dany użytkownik juz istnieje w bazie
+    - szyfrowanie haseł za pomocą sha512
+- logowanie
+    - autoryzacja 
+    - autentykacja
 - baza danych dla produktów i usług
+    - dodawanie / edycja / usuwanie
+    - przesyłanie zdjęć produktów na serwer
 - obsługa koszyka
+    - dodawanie / edycja / usuwanie
+
 
 <hr/>
 
@@ -58,45 +70,95 @@ Przykład strony dla zakładu usługowego.
 
 ## Zrealizowane zadania
 
-- [x] Instalacj Nest
+- [x] Instalacja Nest
 - [x] Założenie repozytorium na GitHub
 - [x] Przygotowanie pliku README
-- [x] Konfiguracj Git i wypchniecie projektu na zdlane repozytorium
+- [x] Konfiguracja Git i wypchniecie projektu na zdalne repozytorium
 - [x] Stworzenie testowego programu, który zwróci napis "Aplikacja działa"
-- [x] Stworenie bazy danych
+- [x] Stworzenie bazy danych
 - [x] Przygotowanie pliku config.ts 
-- [x] Stworzenie połaczenia z bazą danych
+- [x] Stworzenie połąaczenia z bazą danych
 - [x] Instalacja TypeORM
 - [x] Konteneryzacja
 - [x] Uruchomienie projektu na AWS w usłudze EKS
-
-- [ ] Dodanie endpiontów
-- [ ] Globalna obsługa błędów
-
-- [ ] Dodawanie rekordu
-- [ ] Listowanie ogłoszeń
-- [ ] Wyszukiwanie ogłoszeń
-- [ ] Dodawanie ogłoszeń
-- [ ] Zwracanie pojedynczego ogłoszenia
-
-- [ ] Rejstracja, logowanie, autoryzacja i autentykacja
-
+- [x] Rejestracja, logowanie, autoryzacja i autentykacja
+- [x] Dodanie modułu produktów i usług
+- [x] Dodanie endpointów produktów i usług
+  - [x] Zaprojektowanie struktury bazy
+  - [x] Dodawanie rekordu ogłoszenia
+  - [x] Zwracanie pojedynczego ogłoszenia
+  - [x] Listowanie ogłoszeń
+  - [x] Wyszukiwanie ogłoszeń
+  - [x] Dodawanie ogłoszeń
+- [x] Dodanie modułu koszyka
+- [x] Dodanie endpiontów dla koszyka
+  - [x] Zaprojektowanie struktury bazy
+  - [x] Dodawanie rekordu koszyka
+  - [x] Zwracanie zawartości koszyka
+  - [ ] Zapamiętywanie historii koszyka/zakupów
 
 <hr/>
 
-## Uruchomienie
+# Punkty API
+
+## USER
+| Metoda HTTP   | Kontroler | Ścieżka   | Request            | Response             | Rola | Opis                          |
+|---------------|-----------|-----------|--------------------|----------------------|------|-------------------------------|
+| POST          | /user     | /register | UserRegisterEntity | UserRegisterResponse |  -   | Utworzenie nowego użytkownika |
+|               |           |           |                    |                      |      |                               |
+
+Przykład utworzenia nowego konta:
+```bash
+curl -X POST -H "Accept: application/json" -H "Content-type: application/json" -d '{"login":"My login","email":"ex@m.pl","password":"you_pass"}' http://localhost:3001/user/register
+```
+Powinna przyjść odpowiedz:
+```bash
+{"isSucces":true}
+```
+
+
+## AUTH
+| Metoda HTTP   | Kontroler | Ścieżka   | Request         | Response             | Rola       | Opis                                |
+|---------------|-----------|-----------|-----------------|----------------------|------------|-------------------------------------|
+| POST          | /auth     | /login    | AuthLoginEntity | AuthRegisterResponse |  -         | Logowanie                           |
+| GET           | /auth     | /logout   |        -        | AuthRegisterResponse | zalogowany | Wylogowanie                         |
+| GET           | /auth     | /islogged |        -        | AuthRegisterResponse |  -         | Sprawdzenie, czy jestsmy zalogowani |
+|               |           |           |                 |                      |            |                                     |
+
+Przykład zalogowania się:
+```bash
+curl -X POST -H "Accept: application/json" -H "Content-type: application/json" -d '{"email":"ex@m.pl","password":"you_pass"}' http://localhost:3001/auth/login
+```
+Powinna przyjść odpowiedz:
+```bash
+{"isSucces":true}
+```
+
+## BASKET
+| Metoda HTTP | Kontroler | Ścieżka                  | Request       | Response                   | Rola       | Opis                                       |
+|-------------|-----------|--------------------------|---------------|----------------------------|------------|--------------------------------------------|
+| GET         | /basket   | /:userId                 |        -      | ListProductFromBasketRes   | zalogowany | Pobranie koszyka wskazanego użytkownika    |
+| GET         | /basket   | /admin                   |        -      | BasketItem[]               | admin      | Pobranie wszytkich rekordów ze szczegółami |
+| GET         | /basket   | /total-price/:userId     |        -      | GetTotalBasketPriceRes     | zalogowany | Pobieranie sumy z zamówień w koszyku       |
+| POST        | /basket   | /                        | AddItemEntity | AddProductToBasketRes      | zalogowany | Dodanie produktu do koszyka                |
+| DELETE      | /basket   | /:itemInBasketId/:userId |        -      | RemoveProductFromBasketRes | zalogowany | Usunięcie pojedynczego produktu z koszyka  |
+| DELETE      | /basket   | /all/:userId             |        -      | RemoveProductFromBasketRes | zalogowany | Usunięcie wszystkich produktów  z koszyka  |
+|             |           |                          |               |                            |            |                                            |
+<hr/>
+
+# Uruchomienie
 
 Repozytorium współdziała z częścią frontendową, którą można znaleźć pod [tym adresem](https://github.com/Keszua)
 
-### Uruchomienie projektu na swojej lokanej maszynie
+## Uruchomienie projektu na swojej lokalnej maszynie
 
 Sklonuj repozytorium na swój dysk
 
 ```bash
-git clone https://github.com/Keszua/project...
+git clone https://github.com/Keszua/megak-game-over-back.git
 ```
 
-Wejdz do folderu *project* i pobierz wymagane zależnosci
+Wejdź do folderu *project* i pobierz wymagane zależności
 
 ```bash
 cd project
@@ -111,7 +173,7 @@ Uruchomienie projektu
 npm start
 ```
 
-Zostanie uruhomiony serwer [http://localhost:3001](http://localhost:3001).
+Zostanie uruchomiony serwer [http://localhost:3001](http://localhost:3001).
 
 Uruchomienie w trybie watch mode
 
@@ -135,7 +197,7 @@ Tworzenie obrazu kontenera:
 docker image build -t megak-gameover-back:v1.0.1 .
 ```
 
-Zakładjąc że jest zainstalwoany Docker, można sprawdzić, czy kontener uruchomi się prawidłowo na lokalnej maszynie, za pomcą polecenia:
+Zakładając że jest zainstalowany Docker, można sprawdzić, czy kontener uruchomi się prawidłowo na lokalnej maszynie, za pomocą polecenia:
 ```bash
 docker run -p 3000:3000 megak-gameover-back:v1.0.1
 ```
@@ -172,7 +234,7 @@ Można sprawdzić czy powstała instancja secret za pomocą polecenia (na chmurz
 kubectl get secrets
 ```
 
-*gameover-volume.yaml* - plik do stworzenia stałego miejsca na dysku, gdzie będą trwale przehowywane dane z bazy (nie zostaną utracone, nawet jeśli przestanie istnieć kontener z mysql)
+*gameover-volume.yaml* - plik do stworzenia stałego miejsca na dysku, gdzie będą trwale przechowywane dane z bazy (nie zostaną utracone, nawet jeśli przestanie istnieć kontener z mysql)
 ```bash
 kubectl apply -f gameover-volume.yaml
 ```
@@ -194,7 +256,7 @@ Jeśli wszystko się uruchomiło poprawnie, po wpisaniu polecenia (na chmurze):
 ```bash
 kubectl get all
 ```
-Powiniśmy zobaczyć wynik podobny do tego:
+Powinniśmy zobaczyć wynik podobny do tego:
 ```js
 NAME                                  READY   STATUS    RESTARTS   AGE
 pod/gameover-mysql-78779bdd59-7tchh   1/1     Running   0          65m
@@ -216,11 +278,11 @@ replicaset.apps/megak-gameover-56464c685d   2         2         2       38m
 replicaset.apps/megak-gameover-6cb577955    0         0         0       60m
 ```
 
-Gdzie [http://ac58800750a4f453a90e4e72f470ca71-405922443.eu-central-1.elb.amazonaws.com/](http://ac58800750a4f453a90e4e72f470ca71-405922443.eu-central-1.elb.amazonaws.com/) to działajacy link, pod którym działa aplikacja.
-
+Gdzie [http://ac58800750a4f453a90e4e72f470ca71-405922443.eu-central-1.elb.amazonaws.com/](http://ac58800750a4f453a90e4e72f470ca71-405922443.eu-central-1.elb.amazonaws.com/) to  link, do aplikacji.
 
 
 W plikach .yaml dodałem podstawowe wskazówki związane z dany plikiem
+
 <br/><br/><hr/>
 
 ## Kontakt
