@@ -10,15 +10,27 @@
 Projekt na zaliczenie drugiej edycji [Mega Kursu JavaScriptu MegaK](https://www.megak.pl)
 
 To jest **back end** napisany w ***node.js*** (framework *NestJS*)
+
 Do prawidłowego działania, wymagany jest **front end** dostępny pod [tym adresem](https://github.com/Keszua/megak-game-over-front/)
 
 <hr/>
 
 ## Opis projektu
 Przykład strony dla zakładu usługowego.
-- rejestracja, logowanie, autoryzacja i autentykacja
+- obsługa bazy danych mySQL (z pomocą typeORM)
+- rejestracja
+    - przechowywanie użytkowników w bazie
+    - sprawdzanie czy dany użytkownik juz istnieje w bazie
+    - szyfrowanie haseł za pomocą sha512
+- logowanie
+    - autoryzacja 
+    - autentykacja
 - baza danych dla produktów i usług
+    - dodawanie / edycja / usuwanie
+    - przesyłanie zdjęć produktów na serwer
 - obsługa koszyka
+    - dodawanie / edycja / usuwanie
+
 
 <hr/>
 
@@ -84,21 +96,66 @@ Przykład strony dla zakładu usługowego.
   - [x] Dodawanie rekordu koszyka
   - [x] Zwracanie zawartości koszyka
   - [ ] Zapamiętywanie historii koszyka/zakupów
-- [ ] Globalna obsługa błędów
-
 
 <hr/>
 
-## Uruchomienie
+# Punkty API
+
+## USER
+| Metoda HTTP   | Kontroler | Ścieżka   | Request            | Response             | Rola | Opis                          |
+|---------------|-----------|-----------|--------------------|----------------------|------|-------------------------------|
+| POST          | /user     | /register | UserRegisterEntity | UserRegisterResponse |  -   | Utworzenie nowego użytkownika |
+|               |           |           |                    |                      |      |                               |
+
+Przykład utworzenia nowego konta:
+```bash
+curl -X POST -H "Accept: application/json" -H "Content-type: application/json" -d '{"login":"My login","email":"ex@m.pl","password":"you_pass"}' http://localhost:3001/user/register
+```
+Powinna przyjść odpowiedz:
+```bash
+{"isSucces":true}
+```
+
+
+## AUTH
+| Metoda HTTP   | Kontroler | Ścieżka   | Request         | Response             | Rola       | Opis                                |
+|---------------|-----------|-----------|-----------------|----------------------|------------|-------------------------------------|
+| POST          | /auth     | /login    | AuthLoginEntity | AuthRegisterResponse |  -         | Logowanie                           |
+| GET           | /auth     | /logout   |        -        | AuthRegisterResponse | zalogowany | Wylogowanie                         |
+| GET           | /auth     | /islogged |        -        | AuthRegisterResponse |  -         | Sprawdzenie, czy jestsmy zalogowani |
+|               |           |           |                 |                      |            |                                     |
+
+Przykład zalogowania się:
+```bash
+curl -X POST -H "Accept: application/json" -H "Content-type: application/json" -d '{"email":"ex@m.pl","password":"you_pass"}' http://localhost:3001/auth/login
+```
+Powinna przyjść odpowiedz:
+```bash
+{"isSucces":true}
+```
+
+## BASKET
+| Metoda HTTP | Kontroler | Ścieżka                  | Request       | Response                   | Rola       | Opis                                       |
+|-------------|-----------|--------------------------|---------------|----------------------------|------------|--------------------------------------------|
+| GET         | /basket   | /:userId                 |        -      | ListProductFromBasketRes   | zalogowany | Pobranie koszyka wskazanego użytkownika    |
+| GET         | /basket   | /admin                   |        -      | BasketItem[]               | admin      | Pobranie wszytkich rekordów ze szczegółami |
+| GET         | /basket   | /total-price/:userId     |        -      | GetTotalBasketPriceRes     | zalogowany | Pobieranie sumy z zamówień w koszyku       |
+| POST        | /basket   | /                        | AddItemEntity | AddProductToBasketRes      | zalogowany | Dodanie produktu do koszyka                |
+| DELETE      | /basket   | /:itemInBasketId/:userId |        -      | RemoveProductFromBasketRes | zalogowany | Usunięcie pojedynczego produktu z koszyka  |
+| DELETE      | /basket   | /all/:userId             |        -      | RemoveProductFromBasketRes | zalogowany | Usunięcie wszystkich produktów  z koszyka  |
+|             |           |                          |               |                            |            |                                            |
+<hr/>
+
+# Uruchomienie
 
 Repozytorium współdziała z częścią frontendową, którą można znaleźć pod [tym adresem](https://github.com/Keszua)
 
-### Uruchomienie projektu na swojej lokalnej maszynie
+## Uruchomienie projektu na swojej lokalnej maszynie
 
 Sklonuj repozytorium na swój dysk
 
 ```bash
-git clone https://github.com/Keszua/project...
+git clone https://github.com/Keszua/megak-game-over-back.git
 ```
 
 Wejdź do folderu *project* i pobierz wymagane zależności
@@ -221,12 +278,10 @@ replicaset.apps/megak-gameover-56464c685d   2         2         2       38m
 replicaset.apps/megak-gameover-6cb577955    0         0         0       60m
 ```
 
-Gdzie [http://ac58800750a4f453a90e4e72f470ca71-405922443.eu-central-1.elb.amazonaws.com/](http://ac58800750a4f453a90e4e72f470ca71-405922443.eu-central-1.elb.amazonaws.com/) to  link, do naszej aplikacji.
+Gdzie [http://ac58800750a4f453a90e4e72f470ca71-405922443.eu-central-1.elb.amazonaws.com/](http://ac58800750a4f453a90e4e72f470ca71-405922443.eu-central-1.elb.amazonaws.com/) to  link, do aplikacji.
 
 
 W plikach .yaml dodałem podstawowe wskazówki związane z dany plikiem
-
-**Uwaga!** Wyłączyłęm tą usługę, poniewarz w ciągu miesiaca obciążyło moje konto na około 100USD. Jeszcze nie stać mnie na taką zabawę.
 
 <br/><br/><hr/>
 
