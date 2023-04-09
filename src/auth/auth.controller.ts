@@ -22,13 +22,18 @@ export class AuthController {
 
   @Get('/logout')
   @UseGuards(AuthGuard('jwt'))
-  async logout(@UserObj() user: User, @Res() res: Response) {
+  async logout(
+    @UserObj() user: User, 
+    @Res() res: Response,
+  ) {
     return this.authService.logout(user, res);
   }
 
   @Get('/islogged')
   @UseGuards(AuthGuard('jwt'))
-  async islogged(@Res() res: Response) {
-    return this.authService.islogged(res);
+  async islogged(
+    @UserObj() user: User, 
+  ): Promise<AuthLoginResponse> {
+    return this.authService.islogged(user);
   }
 }

@@ -86,10 +86,13 @@ export class AuthService {
     }
   }
 
-  async islogged(res: Response): Promise<any> {
-    return res.json({
+  async islogged(user: User): Promise<AuthLoginResponse> {
+    return {
         isSucces: true,
-    } as AuthLoginResponse);
+        login: user.login,
+        role: user.permissions,
+        id: user.id,
+    }
   }
 
 }

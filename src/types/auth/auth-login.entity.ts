@@ -7,7 +7,8 @@ export interface AuthLoginEntity {
 
 
 export enum AuthLoginResProblem {
-    INVALID_LOGIN = 'Invalid login data!'
+    INVALID_LOGIN = 'Invalid login data!',
+    NO_LOGIN = 'No login',
 }
 
 export type AuthLoginResponse = {

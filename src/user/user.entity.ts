@@ -25,7 +25,7 @@ export class User extends BaseEntity {
         enum: UserPermissions,
         default: UserPermissions.USER,
     })
-    permissions: string;
+    permissions: UserPermissions;
 
     @Column({
         nullable: true,
