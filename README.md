@@ -13,6 +13,8 @@ To jest **back end** napisany w ***node.js*** (framework *NestJS*)
 
 Do prawidłowego działania, wymagany jest **front end** dostępny pod [tym adresem](https://github.com/Keszua/megak-game-over-front/)
 
+### Link do działającego demo: [keszua.networkmanager.pl](https://keszua.networkmanager.pl/)
+
 <hr/>
 
 ## Opis projektu
