@@ -36,6 +36,7 @@ lerna-debug.log*
 
 #storage
 /storage
+/tmp
 
 # Private data
 ReadmePrivate.md

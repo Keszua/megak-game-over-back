@@ -28,6 +28,8 @@ async function bootstrap() {
     })
   )
 
+  app.setGlobalPrefix(config.prefixPath);
+
   await app.listen(process.env.PORT ? parseInt(process.env.PORT) : 3001);
 }
 bootstrap();

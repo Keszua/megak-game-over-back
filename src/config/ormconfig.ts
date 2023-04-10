@@ -12,7 +12,7 @@ export const ormConfig: MysqlConnectionOptions = {
 	  'dist/**/*.entity{.ts,.js}',
 	],
     bigNumberStrings: false,
-	logging: true, 
-	synchronize: true,
+	logging: config.ormLogging, 
+	synchronize: config.ormSynchronize,
     charset: "utf8mb4_unicode_ci",
   }

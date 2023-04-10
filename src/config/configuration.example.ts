@@ -16,6 +16,10 @@ export const config = {
     acDomain: 'localhost',
     acHttpOnly: true,
 
+    //ORM config
+    ormLogging: false,
+    ormSynchronize: false,
+
     // other settings
     prefixPath: '',                    // path to folder in you server 
 	corsOrigin: 'http://localhost:3000',
